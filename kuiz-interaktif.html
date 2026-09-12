@@ -6,6 +6,7 @@
 <title>Kuiz Interaktif — EduPlay</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/bCrypt.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -418,90 +419,54 @@ textarea:focus{border-color:var(--accent2)}
 
 <script>
 // ══════════════════════════════
-// SUPABASE
+// SUPABASE + SHARED SESSION
 // ══════════════════════════════
 const SUPA_URL='https://kvmcjqisgqbxgtlhewtl.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2bWNqcWlzZ3FieGd0bGhld3RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxOTEyODgsImV4cCI6MjEwNDc2NzI4OH0.Q2KhqItgbYKggvF2zNaPc-pYXShP4AbSTRDWRJzL9y4';
 const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
 
+const SESSION_KEY='eduplay_session';
 let currentUser=null;
 let allCloudSets=[];
 let editingSetId=null;
 
-// ── Auth state listener ──
-sb.auth.onAuthStateChange((_,session)=>{
-  currentUser=session?.user||null;
-  renderAuthBar();
-  loadCloudSets();
-  const saveBtn=document.getElementById('save-cloud-btn');
-  if(saveBtn) saveBtn.style.display=currentUser?'inline-block':'none';
-});
+function loadSession(){
+  try{
+    const raw=localStorage.getItem(SESSION_KEY);
+    if(!raw)return null;
+    const s=JSON.parse(raw);
+    if(Date.now()>s.expires){localStorage.removeItem(SESSION_KEY);return null;}
+    currentUser=s.user;return s;
+  }catch{return null;}
+}
+function clearSession(){localStorage.removeItem(SESSION_KEY);currentUser=null;}
+
+/// ── Auth state init ──
+loadSession();
+renderAuthBar();
+loadCloudSets();
 
 function renderAuthBar(){
   const bar=document.getElementById('auth-bar');
+  const saveBtn=document.getElementById('save-cloud-btn');
   if(!currentUser){
-    bar.innerHTML=`<button class="btn btn-secondary btn-sm" onclick="openAuthModal()">🔐 Log Masuk</button>`;
+    bar.innerHTML='<a href="index.html" class="btn btn-secondary btn-sm">🔐 Log Masuk</a>';
+    if(saveBtn)saveBtn.style.display='none';
   }else{
-    const name=currentUser.user_metadata?.full_name||currentUser.email.split('@')[0];
+    const name=currentUser.display_name||currentUser.username||'Cikgu';
     const initials=name.substring(0,2).toUpperCase();
-    bar.innerHTML=`
-      <div class="auth-avatar">${initials}</div>
-      <div><div class="auth-name">${name}</div><div class="auth-email">${currentUser.email}</div></div>
-      <button class="btn btn-secondary btn-sm" onclick="logout()">Keluar</button>`;
+    bar.innerHTML=`<div class="auth-avatar">${initials}</div>
+      <div class="auth-username">${name}</div>
+      <button class="btn btn-secondary btn-sm" onclick="doLogout()">Keluar</button>`;
+    if(saveBtn)saveBtn.style.display='inline-block';
   }
 }
 
-// ── Auth Modal ──
-let authMode='login';
-function openAuthModal(){
-  authMode='login';
-  updateAuthModalUI();
-  document.getElementById('auth-modal').classList.add('open');
-}
-function closeAuthModal(){document.getElementById('auth-modal').classList.remove('open')}
-function toggleAuthMode(){
-  authMode=authMode==='login'?'register':'login';
-  updateAuthModalUI();
-}
-function updateAuthModalUI(){
-  const isReg=authMode==='register';
-  document.getElementById('auth-modal-title').textContent=isReg?'📝 Daftar Akaun':'🔐 Log Masuk';
-  document.getElementById('auth-submit-btn').textContent=isReg?'Daftar':'Log Masuk';
-  document.getElementById('auth-toggle-text').textContent=isReg?'Sudah ada akaun? ':'Belum ada akaun? ';
-  document.getElementById('auth-toggle-btn').textContent=isReg?'Log Masuk':'Daftar';
-  document.getElementById('auth-name-wrap').style.display=isReg?'block':'none';
-  document.getElementById('auth-msg').style.display='none';
-}
-function showAuthMsg(msg,ok=false){
-  const el=document.getElementById('auth-msg');
-  el.className='auth-msg '+(ok?'ok':'err');
-  el.textContent=msg;el.style.display='block';
-}
-async function submitAuth(){
-  const email=document.getElementById('auth-email').value.trim();
-  const password=document.getElementById('auth-password').value;
-  if(!email||!password){showAuthMsg('Sila isi email dan kata laluan.');return;}
-  if(authMode==='register'){
-    const name=document.getElementById('auth-name').value.trim()||email.split('@')[0];
-    const{error}=await sb.auth.signUp({email,password,options:{data:{full_name:name}}});
-    if(error){showAuthMsg(error.message);}
-    else{showAuthMsg('✓ Akaun didaftar! Sila semak email untuk pengesahan.',true);}
-  }else{
-    const{error}=await sb.auth.signInWithPassword({email,password});
-    if(error){showAuthMsg('Email atau kata laluan salah.');}
-    else{closeAuthModal();sfxSelect();}
-  }
-}
-async function sendMagicLink(){
-  const email=document.getElementById('auth-email').value.trim();
-  if(!email){showAuthMsg('Sila masukkan email dahulu.');return;}
-  const{error}=await sb.auth.signInWithOtp({email});
-  if(error){showAuthMsg(error.message);}
-  else{showAuthMsg('✓ Magic link dihantar! Semak email anda.',true);}
-}
-async function logout(){
-  await sb.auth.signOut();
-  sfxSelect();
+async function doLogout(){
+  const s=loadSession();
+  if(s?.token)await sb.from('user_sessions').delete().eq('token',s.token);
+  clearSession();renderAuthBar();
+  window.location.href='index.html';
 }
 
 // ── Cloud Sets ──
@@ -593,8 +558,8 @@ async function confirmSaveCloud(){
   const userName=currentUser.user_metadata?.full_name||currentUser.email.split('@')[0];
   const{error}=await sb.from('quiz_sets').insert({
     created_by:currentUser.id,
-    teacher_name:userName,
-    teacher_email:currentUser.email,
+    teacher_name:currentUser.display_name||currentUser.username,
+    teacher_email:currentUser.username,
     name,subject,year_level,
     questions:qs,settings,is_public:true
   });
