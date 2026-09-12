@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPlay — Portal PdPc Guru</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Baloo+2:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0f1b35;
+  --surface:  #192847;
+  --surface2: #1e3259;
+  --accent:   #f7c948;
+  --accent2:  #4fd1c5;
+  --text:     #eef2ff;
+  --muted:    #7a90b8;
+  --radius:   18px;
+  --font:     'Nunito', sans-serif;
+  --display:  'Baloo 2', cursive;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 6vw;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(15,27,53,0.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.nav-logo {
+  font-family: var(--display);
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--accent);
+  text-decoration: none;
+  letter-spacing: -0.5px;
+}
+.nav-logo span { color: var(--accent2); }
+
+.nav-tag {
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 6vw 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated background blobs */
+.hero::before, .hero::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.18;
+  pointer-events: none;
+}
+.hero::before {
+  width: 500px; height: 500px;
+  background: #4fd1c5;
+  top: -100px; left: -100px;
+  animation: drift 12s ease-in-out infinite alternate;
+}
+.hero::after {
+  width: 400px; height: 400px;
+  background: #f7c948;
+  bottom: -60px; right: -80px;
+  animation: drift 16s ease-in-out infinite alternate-reverse;
+}
+@keyframes drift {
+  from { transform: translate(0,0); }
+  to   { transform: translate(40px, 30px); }
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(79,209,197,0.12);
+  border: 1px solid rgba(79,209,197,0.3);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 0.8rem;
+  color: var(--accent2);
+  font-weight: 700;
+  margin-bottom: 28px;
+  position: relative;
+}
+.pulse-dot {
+  width: 7px; height: 7px;
+  background: var(--accent2);
+  border-radius: 50%;
+  animation: pulse 2s ease infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+.hero h1 {
+  font-family: var(--display);
+  font-size: clamp(2.6rem, 7vw, 5.2rem);
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--text);
+  max-width: 780px;
+  position: relative;
+}
+
+.hero h1 .highlight {
+  color: var(--accent);
+  display: block;
+}
+
+.hero-sub {
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  color: var(--muted);
+  max-width: 480px;
+  line-height: 1.7;
+  margin: 20px auto 36px;
+  position: relative;
+}
+
+.hero-cta {
+  display: inline-block;
+  background: var(--accent);
+  color: #1a1200;
+  font-family: var(--font);
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 14px 32px;
+  border-radius: 14px;
+  text-decoration: none;
+  transition: transform .15s, box-shadow .15s;
+  position: relative;
+  box-shadow: 0 4px 24px rgba(247,201,72,0.25);
+}
+.hero-cta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(247,201,72,0.35);
+}
+
+/* Stats strip */
+.stats-strip {
+  display: flex;
+  justify-content: center;
+  gap: clamp(24px, 5vw, 60px);
+  margin-top: 56px;
+  position: relative;
+}
+.stat-item { text-align: center; }
+.stat-num {
+  font-family: var(--display);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--accent);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ── SECTION DIVIDER ── */
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  margin: 0 auto;
+}
+
+/* ── MODULES SECTION ── */
+.modules-section {
+  padding: 72px 6vw 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-header {
+  margin-bottom: 40px;
+}
+.section-header h2 {
+  font-family: var(--display);
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+}
+.section-header p {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin-top: 8px;
+  max-width: 440px;
+}
+
+/* Modules grid — intentionally uneven: featured card takes 2 cols */
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .modules-grid { grid-template-columns: repeat(2, 1fr); }
+  .module-card.featured { grid-column: span 2; }
+}
+@media (max-width: 540px) {
+  .modules-grid { grid-template-columns: 1fr; }
+  .module-card.featured { grid-column: span 1; }
+}
+
+.module-card {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-decoration: none;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: transform .18s, border-color .18s, box-shadow .18s;
+  cursor: pointer;
+}
+.module-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,0.16);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+}
+
+/* Featured card (Kuiz Interaktif — ready) */
+.module-card.featured {
+  grid-column: span 2;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+  background: linear-gradient(135deg, #1e3259 0%, #192847 100%);
+  border-color: rgba(79,209,197,0.25);
+  padding: 28px 32px;
+}
+.module-card.featured:hover {
+  border-color: rgba(79,209,197,0.5);
+  box-shadow: 0 12px 48px rgba(79,209,197,0.12);
+}
+
+.module-card.coming-soon {
+  opacity: 0.65;
+  cursor: default;
+  pointer-events: none;
+}
+.module-card.coming-soon:hover { transform: none; box-shadow: none; }
+
+/* Card icon blob */
+.module-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+.featured .module-icon {
+  width: 68px; height: 68px;
+  border-radius: 18px;
+  font-size: 2rem;
+}
+
+.module-body { flex: 1; }
+
+.module-name {
+  font-family: var(--display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 5px;
+}
+.featured .module-name { font-size: 1.4rem; }
+
+.module-desc {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.featured .module-desc { font-size: 0.9rem; }
+
+.module-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-top: 10px;
+  width: fit-content;
+}
+.badge-ready {
+  background: rgba(72,187,120,0.15);
+  color: #48bb78;
+  border: 1px solid rgba(72,187,120,0.3);
+}
+.badge-soon {
+  background: rgba(122,144,184,0.12);
+  color: var(--muted);
+  border: 1px solid rgba(122,144,184,0.2);
+}
+
+/* Arrow indicator on ready cards */
+.module-arrow {
+  font-size: 1.2rem;
+  color: var(--muted);
+  transition: transform .18s, color .18s;
+  flex-shrink: 0;
+}
+.module-card:hover .module-arrow { transform: translateX(4px); color: var(--accent2); }
+
+/* Color accents per card */
+.c1 { background: rgba(79,209,197,0.12); }
+.c2 { background: rgba(252,92,125,0.12); }
+.c3 { background: rgba(106,130,251,0.12); }
+.c4 { background: rgba(247,201,72,0.12); }
+.c5 { background: rgba(67,233,123,0.12); }
+.c6 { background: rgba(247,151,30,0.12); }
+.c7 { background: rgba(161,140,209,0.12); }
+.c8 { background: rgba(79,172,254,0.12); }
+.c9 { background: rgba(252,92,125,0.12); }
+.c10 { background: rgba(79,209,197,0.12); }
+
+/* ── HOW IT WORKS ── */
+.how-section {
+  padding: 72px 6vw;
+  background: var(--surface);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.how-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 48px;
+}
+.how-inner h2 {
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 800;
+}
+
+.steps-row {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 24px;
+  width: 100%;
+}
+@media(max-width:600px){ .steps-row { grid-template-columns: 1fr; } }
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.step-circle {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 2px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+}
+.step-item h3 {
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+.step-item p {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 36px 6vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.footer-logo {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: var(--accent);
+}
+.footer-logo span { color: var(--accent2); }
+.footer-copy {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">Edu<span>Play</span></a>
+  <div class="nav-tag">Portal PdPc Guru</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <div class="pulse-dot"></div>
+    10 modul interaktif untuk guru
+  </div>
+  <h1>
+    PdPc yang lebih
+    <span class="highlight">menarik & berkesan</span>
+  </h1>
+  <p class="hero-sub">
+    Koleksi alat bantu mengajar digital — kuiz, permainan, pemasa dan lebih lagi — semuanya percuma, terus dalam pelayar.
+  </p>
+  <a href="#modules" class="hero-cta">Terokai Modul</a>
+
+  <div class="stats-strip">
+    <div class="stat-item">
+      <div class="stat-num">10</div>
+      <div class="stat-label">Modul dirancang</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">6</div>
+      <div class="stat-label">Kumpulan maksimum</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Percuma & offline</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- MODULES -->
+<section class="modules-section" id="modules">
+  <div class="section-header">
+    <h2>Pilih modul anda</h2>
+    <p>Klik mana-mana modul yang sudah siap untuk terus bermula.</p>
+  </div>
+
+  <div class="modules-grid">
+
+    <!-- 1. FEATURED — Kuiz Interaktif (ready) -->
+    <a class="module-card featured" href="kuiz-interaktif.html">
+      <div class="module-icon c1">⚡</div>
+      <div class="module-body">
+        <div class="module-name">Kuiz Interaktif</div>
+        <div class="module-desc">Paste soalan secara bulk, bahagi kepada kumpulan (max 6), tetapkan timer & markah, dan jalankan kuiz live dengan papan skor masa nyata.</div>
+        <div class="module-badge badge-ready">✓ Sedia digunakan</div>
+      </div>
+      <div class="module-arrow">›</div>
+    </a>
+
+    <!-- 2. Bamboozle-style -->
+    <div class="module-card coming-soon">
+      <div class="module-icon c2">🎯</div>
+      <div class="module-body">
+        <div class="module-name">Kuiz Bamboozle</div>
+        <div class="module-desc">Kuiz laju dengan kesan bunyi dan animasi. Pelajar tekan jawapan pada peranti masing-masing.</div>
+        <div class="module-badge badge-soon">Akan datang</div>
+      </div>
+    </div>
+
+    <!-- 3. BBM -->
+    <div class="module-card coming-soon">
+      <div class="module-icon c3">📁</div>
+      <div class="module-body">
+        <div class="module-name">Perkongsian BBM</div>
+        <div class="module-desc">Muat naik dan kongsi bahan bantu mengajar dengan mudah. Susun mengikut mata pelajaran dan tahun.</div>
+        <div class="module-badge badge-soon">Akan datang</div>
+      </div>
+    </div>
+
+    <!-- 4. Spin & Answer -->
+    <div class="module-card coming-soon">
+      <div class="module-icon c4">🎲</div>
+      <div class="module-body">
+        <div class="module-name">Spin & Answer</div>
+        <div class="module-desc">Roda pusingan untuk pilih pelajar atau soalan secara rawak. Tambah keseronokan dalam sesi soal jawab.</div>
+        <div class="module-badge badge-soon">Akan datang</div>
+      </div>
+    </div>
+
+    <!-- 5. Refleksi -->
+    <div class="module-card coming-soon">
+      <div class="module-icon c5">📝</div>
+      <div class="module-body">
+        <div class="module-name">Borang Refleksi</div>
+        <div class="module-desc">Cipta borang refleksi kendiri untuk pelajar isi selepas setiap sesi pembelajaran.</div>
+        <div class="module-badge badge-soon">Akan datang</div>
+      </div>
+    </div>
+
+    <!-- 6. Word Puzzle -->
+    <div class="module-card coming-soon">
+      <div class="module-icon c6">🧩</div>
+      <div class="module-body">
+        <div class="module-name">Word Puzzle</div>
+        <div class="module-desc">Jana carian perkataan atau teka silang kata secara automatik daripada senarai kosa kata yang dimasukkan.</div>
+        <div class="module-badge badge-soon">Akan datang</div>
+      </div>
+    </div>
+
+    <!-- 7. Timer -->
+    <div class="module-card coming-soon">
+      <div class="module-icon c7">⏱</div>
+      <div class="module-body">
+        <div class="module-name">Countdown Timer</div>
+        <div class="module-desc">Pemasa kelas dengan visual besar dan bunyi amaran. Sesuai untuk aktiviti berkumpulan dan peperiksaan.</div>
+        <div class="module-badge badge-soon">Akan datang</div>
+      </div>
+    </div>
+
+    <!-- 8. Penjana Kumpulan -->
+    <div class="module-card coming-soon">
+      <div class="module-icon c8">🎰</div>
+      <div class="module-body">
+        <div class="module-name">Penjana Kumpulan</div>
+        <div class="module-desc">Masukkan nama pelajar, pilih bilangan kumpulan — sistem akan bahagi secara rawak dan adil.</div>
+        <div class="module-badge badge-soon">Akan datang</div>
+      </div>
+    </div>
+
+    <!-- 9. Papan Markah -->
+    <div class="module-card coming-soon">
+      <div class="module-icon c9">📊</div>
+      <div class="module-body">
+        <div class="module-name">Papan Markah</div>
+        <div class="module-desc">Papan markah kumulatif untuk penjejakan prestasi kumpulan sepanjang sesi atau minggu.</div>
+        <div class="module-badge badge-soon">Akan datang</div>
+      </div>
+    </div>
+
+    <!-- 10. Galeri -->
+    <div class="module-card coming-soon">
+      <div class="module-icon c10">🖼</div>
+      <div class="module-body">
+        <div class="module-name">Galeri Idea</div>
+        <div class="module-desc">Ruang untuk kongsi idea PdPc kreatif bersama komuniti guru. Simpan dan cari idea mengikut topik.</div>
+        <div class="module-badge badge-soon">Akan datang</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="how-inner">
+    <h2>Mudah digunakan, terus dalam kelas</h2>
+    <div class="steps-row">
+      <div class="step-item">
+        <div class="step-circle">📂</div>
+        <h3>Pilih modul</h3>
+        <p>Pilih alat yang sesuai dengan aktiviti PdPc anda pada hari tersebut.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-circle">⚙️</div>
+        <h3>Tetapkan</h3>
+        <p>Masukkan soalan, nama kumpulan, masa dan markah mengikut keperluan kelas anda.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-circle">🚀</div>
+        <h3>Jalankan</h3>
+        <p>Tayangkan pada skrin depan kelas dan biarkan pembelajaran berlaku secara interaktif.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Edu<span>Play</span></div>
+  <div class="footer-copy">Dibina untuk guru Malaysia · Percuma selamanya</div>
+</footer>
+
+<script>
+  // Smooth scroll untuk hero CTA
+  document.querySelector('.hero-cta').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('modules').scrollIntoView({ behavior: 'smooth' });
+  });
+</script>
+
+</body>
+</html>
