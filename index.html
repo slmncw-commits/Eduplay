@@ -6,7 +6,6 @@
 <title>EduPlay — Portal PdPc Guru</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Baloo+2:wght@700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/bCrypt.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -18,48 +17,69 @@
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 
 /* NAV */
-nav{display:flex;align-items:center;justify-content:space-between;padding:16px 6vw;position:sticky;top:0;z-index:50;background:rgba(15,27,53,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06);gap:12px;flex-wrap:wrap}
-.nav-logo{font-family:var(--display);font-size:1.5rem;font-weight:900;color:var(--accent);text-decoration:none;letter-spacing:-.5px}
+nav{display:flex;align-items:center;justify-content:space-between;padding:16px 6vw;position:sticky;top:0;z-index:50;background:rgba(15,27,53,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06);gap:12px;flex-wrap:wrap}
+.nav-logo{font-family:var(--display);font-size:1.5rem;font-weight:900;color:var(--accent);text-decoration:none}
 .nav-logo span{color:var(--accent2)}
-.nav-right{display:flex;align-items:center;gap:10px}
+.nav-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .nav-tag{font-size:0.75rem;color:var(--muted);background:var(--surface);border:1px solid rgba(255,255,255,.08);padding:4px 12px;border-radius:20px}
 
 /* AUTH BAR */
 .auth-bar{display:flex;align-items:center;gap:8px}
-.auth-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.8rem;color:#0f1b35;flex-shrink:0}
-.auth-username{font-size:0.82rem;font-weight:700;color:var(--text);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.auth-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent2);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.82rem;color:#0f1b35;flex-shrink:0}
+.auth-username{font-size:0.82rem;font-weight:700;color:var(--text);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* BTNS */
-.btn{padding:9px 20px;border:none;border-radius:10px;font-family:var(--font);font-weight:700;font-size:0.9rem;cursor:pointer;transition:transform .15s,opacity .15s}
+/* BUTTONS */
+.btn{padding:9px 20px;border:none;border-radius:10px;font-family:var(--font);font-weight:700;font-size:0.9rem;cursor:pointer;transition:transform .15s,opacity .15s,background .2s}
 .btn:hover{transform:translateY(-2px);opacity:.92}
 .btn:active{transform:translateY(0)}
 .btn-primary{background:var(--accent);color:#1a1200}
 .btn-secondary{background:var(--surface2);color:var(--text);border:1.5px solid #2e4880}
 .btn-danger{background:var(--wrong);color:#fff}
 .btn-sm{padding:6px 14px;font-size:0.8rem;border-radius:8px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
 /* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:400;align-items:center;justify-content:center}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:400;align-items:center;justify-content:center;padding:16px}
 .modal-overlay.open{display:flex}
-.modal-box{background:var(--surface2);border:1.5px solid #3a5080;border-radius:22px;padding:32px;width:90%;max-width:400px;animation:popIn .25s ease}
-@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
-.modal-box h3{font-family:var(--display);font-size:1.3rem;color:var(--text);margin-bottom:18px;text-align:center}
-.form-group{margin-bottom:12px}
-.form-group label{display:block;font-size:0.8rem;color:var(--muted);margin-bottom:4px;font-weight:700}
-.form-group input{width:100%;padding:10px 13px;background:var(--bg);border:1.5px solid #2e4880;border-radius:10px;color:var(--text);font-family:var(--font);font-size:0.92rem;outline:none;transition:border-color .2s}
+.modal-box{background:var(--surface2);border:1.5px solid #3a5080;border-radius:22px;padding:32px;width:100%;max-width:400px;animation:popIn .25s ease;position:relative}
+@keyframes popIn{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-box h3{font-family:var(--display);font-size:1.3rem;color:var(--text);margin-bottom:20px;text-align:center}
+.form-group{margin-bottom:13px}
+.form-group label{display:block;font-size:0.78rem;color:var(--muted);margin-bottom:4px;font-weight:700;letter-spacing:.3px}
+.form-group input{width:100%;padding:11px 13px;background:var(--bg);border:1.5px solid #2e4880;border-radius:10px;color:var(--text);font-family:var(--font);font-size:0.92rem;outline:none;transition:border-color .2s}
 .form-group input:focus{border-color:var(--accent2)}
-.modal-actions{display:flex;gap:8px;margin-top:16px}
-.modal-actions .btn{flex:1}
-.modal-msg{font-size:0.82rem;padding:8px 12px;border-radius:8px;margin-top:8px;display:none;text-align:center}
+.form-group input.err-field{border-color:var(--wrong)}
+.modal-actions{display:flex;gap:8px;margin-top:18px}
+.modal-actions .btn{flex:1;position:relative;min-height:42px}
+.modal-link{text-align:center;margin-top:12px;font-size:0.8rem;color:var(--muted)}
+.modal-link button{background:none;border:none;color:var(--accent2);font-weight:700;cursor:pointer;font-size:0.8rem;text-decoration:underline;text-decoration-color:transparent;transition:text-decoration-color .15s}
+.modal-link button:hover{text-decoration-color:var(--accent2)}
+
+/* Field error */
+.field-err{font-size:0.74rem;color:var(--wrong);margin-top:3px;display:none}
+
+/* Modal message */
+.modal-msg{font-size:0.82rem;padding:9px 13px;border-radius:9px;margin-top:10px;display:none;text-align:center;font-weight:600}
 .modal-msg.ok{background:rgba(72,187,120,.15);border:1px solid var(--correct);color:var(--correct)}
 .modal-msg.err{background:rgba(252,92,125,.15);border:1px solid var(--wrong);color:var(--wrong)}
-.modal-link{text-align:center;margin-top:12px;font-size:0.8rem;color:var(--muted)}
-.modal-link button{background:none;border:none;color:var(--accent2);font-weight:700;cursor:pointer;font-size:0.8rem}
+
+/* Loading spinner inside button */
+.btn-spinner{display:none;width:16px;height:16px;border:2.5px solid rgba(0,0,0,.2);border-top-color:#1a1200;border-radius:50%;animation:spin .6s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn.loading .btn-text{display:none}
+.btn.loading .btn-spinner{display:block}
 
 /* Recovery code box */
-.recovery-box{background:var(--bg);border:2px solid var(--accent);border-radius:12px;padding:16px;text-align:center;margin:12px 0}
-.recovery-code{font-family:monospace;font-size:1.4rem;font-weight:900;color:var(--accent);letter-spacing:3px;word-break:break-all}
-.recovery-warn{font-size:0.76rem;color:var(--wrong);margin-top:6px;font-weight:700}
+.recovery-box{background:var(--bg);border:2px solid var(--accent);border-radius:14px;padding:18px;text-align:center;margin:14px 0}
+.recovery-code{font-family:'Courier New',monospace;font-size:1.5rem;font-weight:900;color:var(--accent);letter-spacing:4px;word-break:break-all;line-height:1.4}
+.recovery-warn{font-size:0.74rem;color:var(--wrong);margin-top:8px;font-weight:700;line-height:1.4}
+
+/* FULL PAGE LOADING */
+.page-loading{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s}
+.page-loading.hide{opacity:0;pointer-events:none}
+.page-loading-logo{font-family:var(--display);font-size:2rem;font-weight:900;color:var(--accent)}
+.page-loading-logo span{color:var(--accent2)}
+.loading-ring{width:40px;height:40px;border:3px solid rgba(79,209,197,.2);border-top-color:var(--accent2);border-radius:50%;animation:spin .8s linear infinite}
 
 /* HERO */
 .hero{min-height:88vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 6vw 80px;position:relative;overflow:hidden}
@@ -67,15 +87,15 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:16px 6
 .hero::before{width:500px;height:500px;background:#4fd1c5;top:-100px;left:-100px;animation:drift 12s ease-in-out infinite alternate}
 .hero::after{width:400px;height:400px;background:#f7c948;bottom:-60px;right:-80px;animation:drift 16s ease-in-out infinite alternate-reverse}
 @keyframes drift{from{transform:translate(0,0)}to{transform:translate(40px,30px)}}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(79,209,197,.12);border:1px solid rgba(79,209,197,.3);border-radius:20px;padding:6px 16px;font-size:0.8rem;color:var(--accent2);font-weight:700;margin-bottom:28px;position:relative}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(79,209,197,.12);border:1px solid rgba(79,209,197,.3);border-radius:20px;padding:6px 16px;font-size:0.8rem;color:var(--accent2);font-weight:700;margin-bottom:28px}
 .pulse-dot{width:7px;height:7px;background:var(--accent2);border-radius:50%;animation:pulse 2s ease infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
-.hero h1{font-family:var(--display);font-size:clamp(2.6rem,7vw,5.2rem);font-weight:900;line-height:1.1;color:var(--text);max-width:780px;position:relative}
+.hero h1{font-family:var(--display);font-size:clamp(2.6rem,7vw,5.2rem);font-weight:900;line-height:1.1;color:var(--text);max-width:780px}
 .hero h1 .highlight{color:var(--accent);display:block}
-.hero-sub{font-size:clamp(.95rem,2vw,1.1rem);color:var(--muted);max-width:480px;line-height:1.7;margin:20px auto 36px;position:relative}
-.hero-cta{display:inline-block;background:var(--accent);color:#1a1200;font-family:var(--font);font-weight:800;font-size:1rem;padding:14px 32px;border-radius:14px;text-decoration:none;transition:transform .15s,box-shadow .15s;position:relative;box-shadow:0 4px 24px rgba(247,201,72,.25);cursor:pointer;border:none}
+.hero-sub{font-size:clamp(.95rem,2vw,1.1rem);color:var(--muted);max-width:480px;line-height:1.7;margin:20px auto 36px}
+.hero-cta{display:inline-block;background:var(--accent);color:#1a1200;font-family:var(--font);font-weight:800;font-size:1rem;padding:14px 32px;border-radius:14px;text-decoration:none;cursor:pointer;border:none;box-shadow:0 4px 24px rgba(247,201,72,.25);transition:transform .15s,box-shadow .15s}
 .hero-cta:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(247,201,72,.35)}
-.stats-strip{display:flex;justify-content:center;gap:clamp(24px,5vw,60px);margin-top:56px;position:relative}
+.stats-strip{display:flex;justify-content:center;gap:clamp(24px,5vw,60px);margin-top:56px}
 .stat-item{text-align:center}
 .stat-num{font-family:var(--display);font-size:2rem;font-weight:900;color:var(--accent);line-height:1}
 .stat-label{font-size:0.78rem;color:var(--muted);margin-top:4px}
@@ -84,21 +104,20 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:16px 6
 .section-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent)}
 .modules-section{padding:72px 6vw 80px;max-width:1200px;margin:0 auto}
 .section-header{margin-bottom:40px}
-.section-header h2{font-family:var(--display);font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:800;color:var(--text);line-height:1.2}
+.section-header h2{font-family:var(--display);font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:800;color:var(--text)}
 .section-header p{color:var(--muted);font-size:0.92rem;margin-top:8px;max-width:440px}
 .modules-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 @media(max-width:900px){.modules-grid{grid-template-columns:repeat(2,1fr)}.module-card.featured{grid-column:span 2}}
 @media(max-width:540px){.modules-grid{grid-template-columns:1fr}.module-card.featured{grid-column:span 1}}
-.module-card{background:var(--surface);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius);padding:24px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s;cursor:pointer}
+.module-card{background:var(--surface);border:1px solid rgba(255,255,255,.07);border-radius:var(--radius);padding:24px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;gap:12px;transition:transform .18s,border-color .18s,box-shadow .18s;cursor:pointer}
 .module-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.16);box-shadow:0 12px 40px rgba(0,0,0,.3)}
 .module-card.featured{grid-column:span 2;flex-direction:row;align-items:center;gap:24px;background:linear-gradient(135deg,#1e3259 0%,#192847 100%);border-color:rgba(79,209,197,.25);padding:28px 32px}
 .module-card.featured:hover{border-color:rgba(79,209,197,.5);box-shadow:0 12px 48px rgba(79,209,197,.12)}
-.module-card.coming-soon{opacity:.65;cursor:default;pointer-events:none}
-.module-card.coming-soon:hover{transform:none;box-shadow:none}
+.module-card.coming-soon{opacity:.6;cursor:default;pointer-events:none}
 .module-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0}
 .featured .module-icon{width:68px;height:68px;border-radius:18px;font-size:2rem}
 .module-body{flex:1}
-.module-name{font-family:var(--display);font-size:1.05rem;font-weight:800;line-height:1.2;margin-bottom:5px}
+.module-name{font-family:var(--display);font-size:1.05rem;font-weight:800;margin-bottom:5px}
 .featured .module-name{font-size:1.4rem}
 .module-desc{font-size:0.82rem;color:var(--muted);line-height:1.5}
 .featured .module-desc{font-size:0.9rem}
@@ -128,14 +147,20 @@ footer{padding:36px 6vw;display:flex;align-items:center;justify-content:space-be
 .footer-logo span{color:var(--accent2)}
 .footer-copy{font-size:.78rem;color:var(--muted)}
 
-/* Toast */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface2);border:1px solid #3a5080;border-radius:12px;padding:12px 20px;font-size:0.85rem;font-weight:700;color:var(--text);z-index:999;transition:transform .3s ease;white-space:nowrap;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface);border:1.5px solid #3a5080;border-radius:14px;padding:12px 22px;font-size:0.85rem;font-weight:700;color:var(--text);z-index:999;transition:transform .35s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;box-shadow:0 8px 30px rgba(0,0,0,.4)}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .toast.ok{border-color:var(--correct);color:var(--correct)}
 .toast.err{border-color:var(--wrong);color:var(--wrong)}
 </style>
 </head>
 <body>
+
+<!-- PAGE LOADING -->
+<div class="page-loading" id="page-loading">
+  <div class="page-loading-logo">Edu<span>Play</span></div>
+  <div class="loading-ring"></div>
+</div>
 
 <!-- NAV -->
 <nav>
@@ -155,23 +180,24 @@ footer{padding:36px 6vw;display:flex;align-items:center;justify-content:space-be
     <h3>🔐 Log Masuk</h3>
     <div class="form-group">
       <label>Username</label>
-      <input type="text" id="login-username" placeholder="username anda" autocomplete="username">
+      <input type="text" id="login-username" placeholder="username anda" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="field-err" id="login-username-err"></div>
     </div>
     <div class="form-group">
       <label>Kata Laluan</label>
-      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="field-err" id="login-password-err"></div>
     </div>
     <div class="modal-msg" id="login-msg"></div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal('login-modal')">Batal</button>
-      <button class="btn btn-primary" onclick="doLogin()">Log Masuk</button>
+      <button class="btn btn-primary" id="login-btn" onclick="doLogin()">
+        <span class="btn-text">Log Masuk</span>
+        <div class="btn-spinner"></div>
+      </button>
     </div>
-    <div class="modal-link">
-      Lupa kata laluan? <button onclick="switchModal('login-modal','recover-modal')">Guna Recovery Code</button>
-    </div>
-    <div class="modal-link">
-      Belum ada akaun? <button onclick="switchModal('login-modal','register-modal')">Daftar sekarang</button>
-    </div>
+    <div class="modal-link">Lupa kata laluan? <button onclick="switchModal('login-modal','recover-modal')">Guna Recovery Code</button></div>
+    <div class="modal-link">Belum ada akaun? <button onclick="switchModal('login-modal','register-modal')">Daftar sekarang</button></div>
   </div>
 </div>
 
@@ -181,48 +207,53 @@ footer{padding:36px 6vw;display:flex;align-items:center;justify-content:space-be
     <h3>✦ Daftar Akaun</h3>
     <div class="form-group">
       <label>Nama Paparan</label>
-      <input type="text" id="reg-display" placeholder="Nama anda (contoh: Cikgu Aminah)">
+      <input type="text" id="reg-display" placeholder="Cikgu Aminah" onkeydown="if(event.key==='Enter')doRegister()">
+      <div class="field-err" id="reg-display-err"></div>
     </div>
     <div class="form-group">
       <label>Username</label>
-      <input type="text" id="reg-username" placeholder="huruf kecil, tiada ruang (contoh: cikgu_ami)">
+      <input type="text" id="reg-username" placeholder="cikgu_aminah (huruf kecil, tiada ruang)" onkeydown="if(event.key==='Enter')doRegister()">
+      <div class="field-err" id="reg-username-err"></div>
     </div>
     <div class="form-group">
       <label>Kata Laluan</label>
-      <input type="password" id="reg-password" placeholder="minimum 6 aksara">
+      <input type="password" id="reg-password" placeholder="minimum 6 aksara" onkeydown="if(event.key==='Enter')doRegister()">
+      <div class="field-err" id="reg-password-err"></div>
     </div>
     <div class="form-group">
       <label>Sahkan Kata Laluan</label>
-      <input type="password" id="reg-password2" placeholder="taip semula kata laluan">
+      <input type="password" id="reg-password2" placeholder="taip semula" onkeydown="if(event.key==='Enter')doRegister()">
+      <div class="field-err" id="reg-password2-err"></div>
     </div>
     <div class="modal-msg" id="reg-msg"></div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal('register-modal')">Batal</button>
-      <button class="btn btn-primary" onclick="doRegister()">Daftar</button>
+      <button class="btn btn-primary" id="register-btn" onclick="doRegister()">
+        <span class="btn-text">Daftar</span>
+        <div class="btn-spinner"></div>
+      </button>
     </div>
-    <div class="modal-link">
-      Sudah ada akaun? <button onclick="switchModal('register-modal','login-modal')">Log Masuk</button>
-    </div>
+    <div class="modal-link">Sudah ada akaun? <button onclick="switchModal('register-modal','login-modal')">Log Masuk</button></div>
   </div>
 </div>
 
-<!-- ══════════ RECOVERY CODE MODAL (shown after register) ══════════ -->
+<!-- ══════════ RECOVERY CODE DISPLAY ══════════ -->
 <div class="modal-overlay" id="recovery-show-modal">
   <div class="modal-box">
     <h3>🔑 Recovery Code Anda</h3>
-    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:12px;text-align:center">Simpan code ini di tempat selamat. Ia digunakan untuk reset kata laluan jika terlupa.</p>
+    <p style="font-size:0.84rem;color:var(--muted);text-align:center;line-height:1.5">Simpan code ini di tempat selamat. Ia digunakan untuk reset kata laluan jika terlupa.</p>
     <div class="recovery-box">
       <div class="recovery-code" id="recovery-code-display">————————</div>
       <div class="recovery-warn">⚠ Simpan sekarang! Code ini tidak akan dipaparkan lagi.</div>
     </div>
-    <div style="display:flex;gap:8px;margin-top:12px">
-      <button class="btn btn-secondary" style="flex:1" onclick="copyRecovery()">📋 Salin Code</button>
-      <button class="btn btn-primary" style="flex:1" onclick="closeModal('recovery-show-modal')">Saya Dah Simpan ✓</button>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btn-secondary" style="flex:1" onclick="copyRecovery()">📋 Salin</button>
+      <button class="btn btn-primary" style="flex:1" onclick="closeModal('recovery-show-modal')">✓ Dah Simpan</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════ RECOVER PASSWORD MODAL ══════════ -->
+<!-- ══════════ RECOVER PASSWORD ══════════ -->
 <div class="modal-overlay" id="recover-modal">
   <div class="modal-box">
     <h3>🔑 Reset Kata Laluan</h3>
@@ -232,16 +263,19 @@ footer{padding:36px 6vw;display:flex;align-items:center;justify-content:space-be
     </div>
     <div class="form-group">
       <label>Recovery Code</label>
-      <input type="text" id="recover-code" placeholder="kod recovery anda">
+      <input type="text" id="recover-code" placeholder="XXXX-XXXX-XXXX-XXXX" style="letter-spacing:2px">
     </div>
     <div class="form-group">
       <label>Kata Laluan Baru</label>
-      <input type="password" id="recover-newpass" placeholder="minimum 6 aksara">
+      <input type="password" id="recover-newpass" placeholder="minimum 6 aksara" onkeydown="if(event.key==='Enter')doRecover()">
     </div>
     <div class="modal-msg" id="recover-msg"></div>
     <div class="modal-actions">
-      <button class="btn btn-secondary" onclick="switchModal('recover-modal','login-modal')">Kembali</button>
-      <button class="btn btn-primary" onclick="doRecover()">Reset</button>
+      <button class="btn btn-secondary" onclick="switchModal('recover-modal','login-modal')">← Kembali</button>
+      <button class="btn btn-primary" id="recover-btn" onclick="doRecover()">
+        <span class="btn-text">Reset</span>
+        <div class="btn-spinner"></div>
+      </button>
     </div>
   </div>
 </div>
@@ -254,7 +288,7 @@ footer{padding:36px 6vw;display:flex;align-items:center;justify-content:space-be
   <div class="hero-eyebrow"><div class="pulse-dot"></div>10 modul interaktif untuk guru</div>
   <h1>PdPc yang lebih<span class="highlight">menarik & berkesan</span></h1>
   <p class="hero-sub">Koleksi alat bantu mengajar digital — kuiz, permainan, pemasa dan lebih lagi — semuanya percuma, terus dalam pelayar.</p>
-  <button class="hero-cta" onclick="document.getElementById('modules').scrollIntoView({behavior:'smooth'})">Terokai Modul</button>
+  <button class="hero-cta" onclick="document.getElementById('modules').scrollIntoView({behavior:'smooth'})">Terokai Modul ↓</button>
   <div class="stats-strip">
     <div class="stat-item"><div class="stat-num">10</div><div class="stat-label">Modul dirancang</div></div>
     <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Kumpulan maksimum</div></div>
@@ -283,7 +317,7 @@ footer{padding:36px 6vw;display:flex;align-items:center;justify-content:space-be
     <div class="module-card coming-soon"><div class="module-icon c2">🎯</div><div class="module-body"><div class="module-name">Kuiz Bamboozle</div><div class="module-desc">Kuiz laju dengan kesan bunyi dan animasi.</div><div class="module-badge badge-soon">Akan datang</div></div></div>
     <div class="module-card coming-soon"><div class="module-icon c3">📁</div><div class="module-body"><div class="module-name">Perkongsian BBM</div><div class="module-desc">Muat naik dan kongsi bahan bantu mengajar.</div><div class="module-badge badge-soon">Akan datang</div></div></div>
     <div class="module-card coming-soon"><div class="module-icon c4">🎲</div><div class="module-body"><div class="module-name">Spin & Answer</div><div class="module-desc">Roda pusingan untuk pilih pelajar atau soalan secara rawak.</div><div class="module-badge badge-soon">Akan datang</div></div></div>
-    <div class="module-card coming-soon"><div class="module-icon c5">📝</div><div class="module-body"><div class="module-name">Borang Refleksi</div><div class="module-desc">Cipta borang refleksi kendiri untuk pelajar isi selepas sesi.</div><div class="module-badge badge-soon">Akan datang</div></div></div>
+    <div class="module-card coming-soon"><div class="module-icon c5">📝</div><div class="module-body"><div class="module-name">Borang Refleksi</div><div class="module-desc">Cipta borang refleksi kendiri untuk pelajar.</div><div class="module-badge badge-soon">Akan datang</div></div></div>
     <div class="module-card coming-soon"><div class="module-icon c6">🧩</div><div class="module-body"><div class="module-name">Word Puzzle</div><div class="module-desc">Jana carian perkataan atau teka silang kata secara automatik.</div><div class="module-badge badge-soon">Akan datang</div></div></div>
     <div class="module-card coming-soon"><div class="module-icon c7">⏱</div><div class="module-body"><div class="module-name">Countdown Timer</div><div class="module-desc">Pemasa kelas dengan visual besar dan bunyi amaran.</div><div class="module-badge badge-soon">Akan datang</div></div></div>
     <div class="module-card coming-soon"><div class="module-icon c8">🎰</div><div class="module-body"><div class="module-name">Penjana Kumpulan</div><div class="module-desc">Bahagi pelajar kepada kumpulan secara rawak dan adil.</div><div class="module-badge badge-soon">Akan datang</div></div></div>
@@ -298,7 +332,7 @@ footer{padding:36px 6vw;display:flex;align-items:center;justify-content:space-be
     <h2>Mudah digunakan, terus dalam kelas</h2>
     <div class="steps-row">
       <div class="step-item"><div class="step-circle">📂</div><h3>Pilih modul</h3><p>Pilih alat yang sesuai dengan aktiviti PdPc anda pada hari tersebut.</p></div>
-      <div class="step-item"><div class="step-circle">⚙️</div><h3>Tetapkan</h3><p>Masukkan soalan, nama kumpulan, masa dan markah mengikut keperluan kelas anda.</p></div>
+      <div class="step-item"><div class="step-circle">⚙️</div><h3>Tetapkan</h3><p>Masukkan soalan, nama kumpulan, masa dan markah mengikut keperluan kelas.</p></div>
       <div class="step-item"><div class="step-circle">🚀</div><h3>Jalankan</h3><p>Tayangkan pada skrin depan kelas dan biarkan pembelajaran berlaku secara interaktif.</p></div>
     </div>
   </div>
@@ -318,180 +352,335 @@ const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
 
 // ══════════════════════════════
-// SESSION (localStorage)
+// WEB CRYPTO HASH (no library needed)
 // ══════════════════════════════
-const SESSION_KEY='eduplay_session';
-let currentUser=null;
+async function hashPassword(password, salt) {
+  // salt is random string, stored with hash
+  const encoder = new TextEncoder();
+  const data = encoder.encode(salt + password + salt);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
+}
 
-function saveSession(user,token){
-  localStorage.setItem(SESSION_KEY,JSON.stringify({user,token,expires:Date.now()+7*24*60*60*1000}));
-  currentUser=user;
+function genSalt(len=16) {
+  const arr = new Uint8Array(len);
+  crypto.getRandomValues(arr);
+  return Array.from(arr).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
-function loadSession(){
-  try{
-    const raw=localStorage.getItem(SESSION_KEY);
-    if(!raw)return null;
-    const s=JSON.parse(raw);
-    if(Date.now()>s.expires){localStorage.removeItem(SESSION_KEY);return null;}
-    currentUser=s.user;
+
+// Store as "salt:hash"
+async function makeHash(password) {
+  const salt = genSalt();
+  const hash = await hashPassword(password, salt);
+  return salt + ':' + hash;
+}
+
+async function verifyHash(password, stored) {
+  const [salt, hash] = stored.split(':');
+  if (!salt || !hash) return false;
+  const attempt = await hashPassword(password, salt);
+  return attempt === hash;
+}
+
+// ══════════════════════════════
+// SESSION
+// ══════════════════════════════
+const SESSION_KEY = 'eduplay_session';
+let currentUser = null;
+
+function saveSession(user, token) {
+  const session = { user, token, expires: Date.now() + 7*24*60*60*1000 };
+  localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+  currentUser = user;
+}
+
+function loadSession() {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    const s = JSON.parse(raw);
+    if (Date.now() > s.expires) { localStorage.removeItem(SESSION_KEY); return null; }
+    currentUser = s.user;
     return s;
-  }catch{return null;}
+  } catch { return null; }
 }
-function clearSession(){localStorage.removeItem(SESSION_KEY);currentUser=null;}
+
+function clearSession() {
+  localStorage.removeItem(SESSION_KEY);
+  currentUser = null;
+}
 
 // ══════════════════════════════
 // HELPERS
 // ══════════════════════════════
-function genToken(len=32){const c='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';let t='';for(let i=0;i<len;i++)t+=c.charAt(Math.floor(Math.random()*c.length));return t;}
-function genRecoveryCode(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let t='';for(let i=0;i<16;i++){if(i>0&&i%4===0)t+='-';t+=c.charAt(Math.floor(Math.random()*c.length));}return t;}
-
-async function hashPass(pw){return bcrypt.hashSync(pw,10);}
-function verifyPass(pw,hash){return bcrypt.compareSync(pw,hash);}
-
-function showMsg(id,msg,ok=false){
-  const el=document.getElementById(id);
-  el.className='modal-msg '+(ok?'ok':'err');
-  el.textContent=msg;el.style.display='block';
+function genToken(len=40) {
+  const arr = new Uint8Array(len);
+  crypto.getRandomValues(arr);
+  return Array.from(arr).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
-function showToast(msg,type='ok'){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast '+type;
-  setTimeout(()=>t.classList.add('show'),10);
-  setTimeout(()=>t.classList.remove('show'),3000);
+
+function genRecoveryCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 16; i++) {
+    if (i > 0 && i % 4 === 0) code += '-';
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
+
+function showMsg(id, msg, ok=false) {
+  const el = document.getElementById(id);
+  el.className = 'modal-msg ' + (ok ? 'ok' : 'err');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function clearMsg(id) {
+  const el = document.getElementById(id);
+  if (el) { el.style.display = 'none'; el.textContent = ''; }
+}
+
+function showFieldErr(id, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg; el.style.display = msg ? 'block' : 'none';
+  const input = el.previousElementSibling;
+  if (input) input.classList.toggle('err-field', !!msg);
+}
+
+function clearFieldErrs(...ids) {
+  ids.forEach(id => showFieldErr(id, ''));
+}
+
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  if (!btn) return;
+  btn.classList.toggle('loading', loading);
+  btn.disabled = loading;
+}
+
+function showToast(msg, type='ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast ' + type;
+  setTimeout(() => t.classList.add('show'), 10);
+  setTimeout(() => t.classList.remove('show'), 3200);
 }
 
 // ══════════════════════════════
 // MODAL CONTROL
 // ══════════════════════════════
-function openModal(id){document.getElementById(id).classList.add('open')}
-function closeModal(id){document.getElementById(id).classList.remove('open')}
-function switchModal(from,to){closeModal(from);openModal(to);}
+function openModal(id) {
+  // Clear fields & errors when opening
+  const modal = document.getElementById(id);
+  modal.querySelectorAll('input').forEach(i => i.value = '');
+  modal.querySelectorAll('.field-err').forEach(e => { e.style.display='none'; e.textContent=''; });
+  modal.querySelectorAll('.modal-msg').forEach(e => e.style.display='none');
+  modal.querySelectorAll('.err-field').forEach(e => e.classList.remove('err-field'));
+  modal.classList.add('open');
+}
 
-// Close on backdrop click
-document.querySelectorAll('.modal-overlay').forEach(m=>{
-  m.addEventListener('click',e=>{if(e.target===m&&m.id!=='recovery-show-modal')m.classList.remove('open');});
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+function switchModal(from, to) {
+  closeModal(from);
+  openModal(to);
+}
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => {
+    if (e.target === m && m.id !== 'recovery-show-modal') m.classList.remove('open');
+  });
 });
 
 // ══════════════════════════════
-// AUTH FUNCTIONS
+// REGISTER
 // ══════════════════════════════
-async function doRegister(){
-  const display=document.getElementById('reg-display').value.trim();
-  const username=document.getElementById('reg-username').value.trim().toLowerCase();
-  const pw=document.getElementById('reg-password').value;
-  const pw2=document.getElementById('reg-password2').value;
+async function doRegister() {
+  const display = document.getElementById('reg-display').value.trim();
+  const username = document.getElementById('reg-username').value.trim().toLowerCase();
+  const pw = document.getElementById('reg-password').value;
+  const pw2 = document.getElementById('reg-password2').value;
 
-  if(!display||!username||!pw){showMsg('reg-msg','Sila isi semua maklumat.');return;}
-  if(!/^[a-z0-9_]+$/.test(username)){showMsg('reg-msg','Username hanya boleh guna huruf kecil, nombor dan _');return;}
-  if(pw.length<6){showMsg('reg-msg','Kata laluan minimum 6 aksara.');return;}
-  if(pw!==pw2){showMsg('reg-msg','Kata laluan tidak sepadan.');return;}
+  // Clear errors
+  clearFieldErrs('reg-display-err','reg-username-err','reg-password-err','reg-password2-err');
+  clearMsg('reg-msg');
 
-  // Check username taken
-  const{data:existing}=await sb.from('users').select('id').eq('username',username).single();
-  if(existing){showMsg('reg-msg','Username ini sudah digunakan. Cuba lain.');return;}
+  // Validate
+  let hasErr = false;
+  if (!display) { showFieldErr('reg-display-err','Sila isi nama paparan.'); hasErr=true; }
+  if (!username) { showFieldErr('reg-username-err','Sila isi username.'); hasErr=true; }
+  else if (!/^[a-z0-9_]+$/.test(username)) { showFieldErr('reg-username-err','Huruf kecil, nombor dan _ sahaja.'); hasErr=true; }
+  if (!pw) { showFieldErr('reg-password-err','Sila isi kata laluan.'); hasErr=true; }
+  else if (pw.length < 6) { showFieldErr('reg-password-err','Minimum 6 aksara.'); hasErr=true; }
+  if (pw !== pw2) { showFieldErr('reg-password2-err','Kata laluan tidak sepadan.'); hasErr=true; }
+  if (hasErr) return;
 
-  const password_hash=await hashPass(pw);
-  const recovery_code=genRecoveryCode();
-  const recovery_hash=await hashPass(recovery_code);
+  setLoading('register-btn', true);
 
-  const{data,error}=await sb.from('users').insert({
-    username,password_hash,recovery_code:recovery_hash,display_name:display
-  }).select().single();
+  try {
+    // Check username taken
+    const { data: existing } = await sb.from('users').select('id').eq('username', username).maybeSingle();
+    if (existing) {
+      showFieldErr('reg-username-err', 'Username ini sudah digunakan.');
+      setLoading('register-btn', false);
+      return;
+    }
 
-  if(error){showMsg('reg-msg','Gagal daftar: '+error.message);return;}
+    const password_hash = await makeHash(pw);
+    const recovery_code = genRecoveryCode();
+    const recovery_hash = await makeHash(recovery_code);
 
-  // Auto login
-  const token=genToken();
-  const expires=new Date(Date.now()+7*24*60*60*1000).toISOString();
-  await sb.from('user_sessions').insert({user_id:data.id,token,expires_at:expires});
-  saveSession({id:data.id,username,display_name:display},token);
+    const { data: newUser, error } = await sb.from('users').insert({
+      username, password_hash,
+      recovery_code: recovery_hash,
+      display_name: display
+    }).select().single();
 
-  closeModal('register-modal');
-  // Show recovery code
-  document.getElementById('recovery-code-display').textContent=recovery_code;
-  openModal('recovery-show-modal');
-  renderAuthBar();
+    if (error) { showMsg('reg-msg', 'Ralat: ' + error.message); setLoading('register-btn', false); return; }
+
+    // Create session
+    const token = genToken();
+    const expires = new Date(Date.now() + 7*24*60*60*1000).toISOString();
+    await sb.from('user_sessions').insert({ user_id: newUser.id, token, expires_at: expires });
+
+    saveSession({ id: newUser.id, username, display_name: display }, token);
+    setLoading('register-btn', false);
+    closeModal('register-modal');
+
+    // Show recovery code
+    document.getElementById('recovery-code-display').textContent = recovery_code;
+    openModal('recovery-show-modal');
+    renderAuthBar();
+    showToast('✓ Akaun berjaya didaftar!', 'ok');
+
+  } catch(e) {
+    showMsg('reg-msg', 'Ralat tidak dijangka: ' + e.message);
+    setLoading('register-btn', false);
+  }
 }
 
-async function doLogin(){
-  const username=document.getElementById('login-username').value.trim().toLowerCase();
-  const pw=document.getElementById('login-password').value;
-  if(!username||!pw){showMsg('login-msg','Sila isi username dan kata laluan.');return;}
+// ══════════════════════════════
+// LOGIN
+// ══════════════════════════════
+async function doLogin() {
+  const username = document.getElementById('login-username').value.trim().toLowerCase();
+  const pw = document.getElementById('login-password').value;
 
-  const{data:user,error}=await sb.from('users').select('*').eq('username',username).single();
-  if(error||!user){showMsg('login-msg','Username tidak dijumpai.');return;}
+  clearFieldErrs('login-username-err','login-password-err');
+  clearMsg('login-msg');
 
-  const ok=verifyPass(pw,user.password_hash);
-  if(!ok){showMsg('login-msg','Kata laluan salah.');return;}
+  let hasErr = false;
+  if (!username) { showFieldErr('login-username-err','Sila isi username.'); hasErr=true; }
+  if (!pw) { showFieldErr('login-password-err','Sila isi kata laluan.'); hasErr=true; }
+  if (hasErr) return;
 
-  const token=genToken();
-  const expires=new Date(Date.now()+7*24*60*60*1000).toISOString();
-  await sb.from('user_sessions').insert({user_id:user.id,token,expires_at:expires});
-  saveSession({id:user.id,username:user.username,display_name:user.display_name},token);
+  setLoading('login-btn', true);
 
-  closeModal('login-modal');
-  renderAuthBar();
-  showToast(`✓ Selamat datang, ${user.display_name||user.username}!`,'ok');
+  try {
+    const { data: user, error } = await sb.from('users').select('*').eq('username', username).maybeSingle();
+    if (error || !user) {
+      showFieldErr('login-username-err', 'Username tidak dijumpai.');
+      setLoading('login-btn', false); return;
+    }
+
+    const ok = await verifyHash(pw, user.password_hash);
+    if (!ok) {
+      showFieldErr('login-password-err', 'Kata laluan salah.');
+      setLoading('login-btn', false); return;
+    }
+
+    const token = genToken();
+    const expires = new Date(Date.now() + 7*24*60*60*1000).toISOString();
+    await sb.from('user_sessions').insert({ user_id: user.id, token, expires_at: expires });
+
+    saveSession({ id: user.id, username: user.username, display_name: user.display_name }, token);
+    setLoading('login-btn', false);
+    closeModal('login-modal');
+    renderAuthBar();
+    showToast(`✓ Selamat datang, ${user.display_name || user.username}!`, 'ok');
+
+  } catch(e) {
+    showMsg('login-msg', 'Ralat: ' + e.message);
+    setLoading('login-btn', false);
+  }
 }
 
-async function doLogout(){
-  const s=loadSession();
-  if(s?.token) await sb.from('user_sessions').delete().eq('token',s.token);
+// ══════════════════════════════
+// RECOVER
+// ══════════════════════════════
+async function doRecover() {
+  const username = document.getElementById('recover-username').value.trim().toLowerCase();
+  const code = document.getElementById('recover-code').value.trim().toUpperCase().replace(/\s/g,'');
+  const newpw = document.getElementById('recover-newpass').value;
+
+  clearMsg('recover-msg');
+  if (!username || !code || !newpw) { showMsg('recover-msg','Sila isi semua maklumat.'); return; }
+  if (newpw.length < 6) { showMsg('recover-msg','Kata laluan baru minimum 6 aksara.'); return; }
+
+  setLoading('recover-btn', true);
+
+  try {
+    const { data: user, error } = await sb.from('users').select('*').eq('username', username).maybeSingle();
+    if (error || !user) { showMsg('recover-msg','Username tidak dijumpai.'); setLoading('recover-btn',false); return; }
+
+    const ok = await verifyHash(code, user.recovery_code);
+    if (!ok) { showMsg('recover-msg','Recovery code salah.'); setLoading('recover-btn',false); return; }
+
+    const new_hash = await makeHash(newpw);
+    const new_recovery = genRecoveryCode();
+    const new_recovery_hash = await makeHash(new_recovery);
+
+    await sb.from('users').update({ password_hash: new_hash, recovery_code: new_recovery_hash }).eq('id', user.id);
+    setLoading('recover-btn', false);
+    closeModal('recover-modal');
+
+    document.getElementById('recovery-code-display').textContent = new_recovery;
+    openModal('recovery-show-modal');
+    showToast('✓ Kata laluan berjaya ditukar!', 'ok');
+
+  } catch(e) {
+    showMsg('recover-msg','Ralat: ' + e.message);
+    setLoading('recover-btn', false);
+  }
+}
+
+// ══════════════════════════════
+// LOGOUT
+// ══════════════════════════════
+async function doLogout() {
+  const s = loadSession();
+  if (s?.token) await sb.from('user_sessions').delete().eq('token', s.token).catch(()=>{});
   clearSession();
   renderAuthBar();
-  showToast('Anda telah log keluar.','ok');
+  showToast('Anda telah log keluar.', 'ok');
 }
 
-async function doRecover(){
-  const username=document.getElementById('recover-username').value.trim().toLowerCase();
-  const code=document.getElementById('recover-code').value.trim().toUpperCase();
-  const newpw=document.getElementById('recover-newpass').value;
-  if(!username||!code||!newpw){showMsg('recover-msg','Sila isi semua maklumat.');return;}
-  if(newpw.length<6){showMsg('recover-msg','Kata laluan baru minimum 6 aksara.');return;}
-
-  const{data:user,error}=await sb.from('users').select('*').eq('username',username).single();
-  if(error||!user){showMsg('recover-msg','Username tidak dijumpai.');return;}
-
-  const ok=verifyPass(code,user.recovery_code);
-  if(!ok){showMsg('recover-msg','Recovery code salah.');return;}
-
-  const new_hash=await hashPass(newpw);
-  const new_recovery=genRecoveryCode();
-  const new_recovery_hash=await hashPass(new_recovery);
-
-  await sb.from('users').update({password_hash:new_hash,recovery_code:new_recovery_hash}).eq('id',user.id);
-
-  closeModal('recover-modal');
-  document.getElementById('recovery-code-display').textContent=new_recovery;
-  openModal('recovery-show-modal');
-  showToast('✓ Kata laluan berjaya ditukar!','ok');
-}
-
-function copyRecovery(){
-  const code=document.getElementById('recovery-code-display').textContent;
-  navigator.clipboard.writeText(code).then(()=>showToast('✓ Code disalin!','ok'));
+function copyRecovery() {
+  const code = document.getElementById('recovery-code-display').textContent;
+  navigator.clipboard.writeText(code).then(() => showToast('✓ Code disalin!', 'ok'));
 }
 
 // ══════════════════════════════
-// AUTH BAR RENDER
+// AUTH BAR
 // ══════════════════════════════
-function renderAuthBar(){
-  const bar=document.getElementById('auth-bar');
-  const s=loadSession();
-  if(!s||!currentUser){
-    bar.innerHTML=`
+function renderAuthBar() {
+  const bar = document.getElementById('auth-bar');
+  if (!currentUser) {
+    bar.innerHTML = `
       <button class="btn btn-secondary btn-sm" onclick="openModal('login-modal')">🔐 Log Masuk</button>
       <button class="btn btn-primary btn-sm" onclick="openModal('register-modal')">✦ Daftar</button>`;
-  }else{
-    const name=currentUser.display_name||currentUser.username;
-    const initials=name.substring(0,2).toUpperCase();
-    bar.innerHTML=`
+  } else {
+    const name = currentUser.display_name || currentUser.username;
+    const initials = name.substring(0,2).toUpperCase();
+    bar.innerHTML = `
       <div class="auth-avatar">${initials}</div>
       <div class="auth-username">${name}</div>
       <button class="btn btn-secondary btn-sm" onclick="doLogout()">Keluar</button>`;
   }
-  // Broadcast to other tabs/pages
-  localStorage.setItem('eduplay_auth_update',Date.now());
 }
 
 // ══════════════════════════════
@@ -500,9 +689,14 @@ function renderAuthBar(){
 loadSession();
 renderAuthBar();
 
-// Enter key on login
-document.getElementById('login-password').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
-document.getElementById('reg-password2').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister()});
+// Hide page loader
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const loader = document.getElementById('page-loading');
+    loader.classList.add('hide');
+    setTimeout(() => loader.remove(), 400);
+  }, 500);
+});
 </script>
 </body>
 </html>
