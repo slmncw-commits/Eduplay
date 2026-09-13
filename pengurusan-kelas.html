@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pengurusan Kelas — EduPlay</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1b35;--surface:#192847;--surface2:#1e3259;
+  --accent:#f7c948;--accent2:#4fd1c5;--correct:#48bb78;--wrong:#fc5c7d;
+  --text:#eef2ff;--muted:#8899bb;--radius:16px;--font:'Nunito',sans-serif;--fd:'Baloo 2',cursive;
+  --g1:#fc5c7d;--g2:#6a82fb;--g3:#43e97b;--g4:#f7971e;--g5:#a18cd1;--g6:#4facfe;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden}
+.screen{display:none;width:100%;height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(25,40,71,.95);border-bottom:1px solid #2a3f6e;gap:12px;flex-shrink:0;z-index:10}
+.nav-left{display:flex;align-items:center;gap:12px}
+.home-btn{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1.5px solid #2e4880;color:var(--muted);font-family:var(--font);font-size:0.8rem;font-weight:700;padding:6px 13px;border-radius:9px;text-decoration:none;cursor:pointer;transition:color .15s}
+.home-btn:hover{color:var(--text);border-color:var(--accent2)}
+.page-title{font-family:var(--fd);font-size:1.2rem;font-weight:900;color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:8px;font-size:0.8rem}
+.auth-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.75rem;color:#0f1b35}
+.auth-name{color:var(--text);font-weight:700;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* BUTTONS */
+.btn{padding:9px 18px;border:none;border-radius:10px;font-family:var(--font);font-weight:700;font-size:0.9rem;cursor:pointer;transition:transform .15s,opacity .15s}
+.btn:hover{transform:translateY(-2px);opacity:.92}
+.btn-primary{background:var(--accent);color:#1a1200}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1.5px solid #2e4880}
+.btn-sm{padding:6px 12px;font-size:0.8rem}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:400;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--surface2);border:1.5px solid #3a5080;border-radius:18px;padding:24px;max-width:420px;width:90%}
+.modal-box h3{font-family:var(--fd);font-size:1.2rem;color:var(--text);margin-bottom:14px}
+.form-group{margin-bottom:10px}
+.form-group label{font-size:0.78rem;color:var(--muted);margin-bottom:3px;display:block;font-weight:700}
+.form-group input,.form-group textarea{width:100%;padding:8px 11px;background:var(--bg);border:1.5px solid #2e4880;border-radius:9px;color:var(--text);font-family:var(--font);font-size:0.9rem;outline:none;resize:vertical}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--accent2)}
+.modal-actions{display:flex;gap:8px;margin-top:12px}
+.modal-actions .btn{flex:1}
+
+/* MAIN LAYOUT */
+.main-container{display:flex;flex:1;min-height:0;overflow:hidden}
+.sidebar{width:280px;background:var(--surface);border-right:1px solid #2a3f6e;padding:14px;overflow-y:auto;flex-shrink:0}
+.sidebar h2{font-size:0.8rem;color:var(--accent2);font-weight:700;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.class-list{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.class-item{padding:8px 11px;background:var(--surface2);border:1.5px solid transparent;border-radius:9px;cursor:pointer;font-size:0.85rem;font-weight:600;transition:border-color .15s,background .15s}
+.class-item:hover{border-color:var(--accent2)}
+.class-item.active{background:var(--accent);color:#1a1200;border-color:var(--accent)}
+.sidebar-btn{width:100%;padding:8px;background:var(--accent);color:#1a1200;border:none;border-radius:9px;font-weight:700;font-size:0.8rem;cursor:pointer;margin-bottom:8px}
+
+/* CONTENT */
+.content{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* SCREEN: Setup */
+#setup-screen .content{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px;overflow-y:auto}
+.setup-panel{background:var(--surface);border-radius:12px;padding:16px;border:1px solid #2a3f6e}
+.setup-panel h3{font-size:0.9rem;color:var(--accent2);font-weight:700;margin-bottom:12px}
+.tabs{display:flex;gap:6px;margin-bottom:12px;border-bottom:1px solid #2e4880}
+.tab-btn{padding:6px 12px;background:none;border:none;color:var(--muted);font-size:0.8rem;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+.tab-btn.active{color:var(--accent);border-color:var(--accent)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.student-input{display:flex;gap:6px;margin-bottom:10px}
+.student-input input{flex:1;padding:7px 9px;background:var(--bg);border:1.5px solid #2e4880;border-radius:8px;color:var(--text);font-size:0.85rem}
+.student-input button{padding:7px 12px;background:var(--accent);color:#1a1200;border:none;border-radius:8px;font-weight:700;font-size:0.8rem;cursor:pointer}
+.student-list{max-height:200px;overflow-y:auto}
+.student-item{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:var(--bg);border-radius:7px;margin-bottom:4px;font-size:0.8rem}
+.student-item button{background:var(--wrong);color:#fff;border:none;border-radius:5px;padding:2px 8px;font-size:0.7rem;cursor:pointer}
+.bulk-textarea{width:100%;min-height:120px;padding:9px;background:var(--bg);border:1.5px solid #2e4880;border-radius:9px;color:var(--text);font-family:monospace;font-size:0.8rem;resize:none}
+.preview-stats{display:flex;flex-direction:column;gap:8px;font-size:0.9rem}
+.stat-line{padding:8px;background:var(--bg);border-radius:8px;border-left:3px solid var(--accent2)}
+.setup-actions{display:flex;flex-direction:column;gap:8px}
+.setup-actions .btn{width:100%}
+
+/* SCREEN: Seating View */
+#seating-screen .content{display:flex;flex-direction:column;padding:16px}
+.view-toolbar{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #2e4880}
+.view-toggle{display:flex;gap:6px}
+.view-toggle button{padding:6px 12px;background:var(--surface2);border:1.5px solid #2e4880;color:var(--muted);border-radius:8px;font-size:0.8rem;font-weight:700;cursor:pointer;transition:border-color .15s,color .15s}
+.view-toggle button.active{border-color:var(--accent2);color:var(--accent2)}
+.seating-canvas-wrap{flex:1;background:rgba(0,0,0,.15);border-radius:12px;border:1px solid #2a3f6e;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center}
+svg.seating-svg{width:100%;height:100%;cursor:grab}
+svg.seating-svg:active{cursor:grabbing}
+.classroom-bg{opacity:.08}
+.seat-group{cursor:pointer}
+.seat-rect{fill:#192847;stroke:#2e4880;stroke-width:2;transition:fill .15s,stroke .15s}
+.seat-rect.dragging{fill:#3a5080;stroke:var(--accent2)}
+.seat-text{font-family:var(--font);font-size:11px;font-weight:700;text-anchor:middle;pointer-events:none;fill:var(--text)}
+
+/* SCREEN: Group View */
+#group-screen .content{display:flex;flex-direction:column;padding:16px}
+.group-canvas-wrap{flex:1;background:rgba(0,0,0,.15);border-radius:12px;border:1px solid #2a3f6e;overflow:hidden;position:relative}
+svg.group-svg{width:100%;height:100%}
+.group-circle{opacity:.15;pointer-events:none}
+.group-student-bubble{cursor:pointer}
+.student-bubble-circle{transition:r .15s}
+.student-bubble-circle:hover{r:18}
+
+/* STUDENT POPUP */
+.student-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface2);border:2px solid var(--accent2);border-radius:16px;padding:24px;max-width:340px;width:90%;z-index:500;box-shadow:0 8px 40px rgba(0,0,0,.5)}
+.student-popup.hidden{display:none}
+.popup-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer}
+.popup-header{text-align:center;margin-bottom:18px}
+.popup-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:1.8rem;font-weight:900;color:#fff;margin:0 auto 8px}
+.popup-name{font-family:var(--fd);font-size:1.3rem;font-weight:800;color:var(--text)}
+.popup-group{font-size:0.8rem;color:var(--muted);margin-top:3px}
+.popup-section{margin-bottom:16px;padding:12px;background:var(--bg);border-radius:10px}
+.popup-section h4{font-size:0.75rem;color:var(--accent2);font-weight:700;text-transform:uppercase;margin-bottom:6px;letter-spacing:.3px}
+.points-display{text-align:center}
+.points-number{font-family:var(--fd);font-size:2.2rem;font-weight:900;color:var(--accent);line-height:1}
+.points-label{font-size:0.75rem;color:var(--muted);margin-top:3px}
+.popup-actions{display:flex;flex-direction:column;gap:8px}
+.popup-actions button{padding:8px;background:var(--accent);color:#1a1200;border:none;border-radius:9px;font-weight:700;font-size:0.85rem;cursor:pointer}
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;display:none}
+.popup-overlay.open{display:block}
+
+/* LOADING */
+.loading{text-align:center;padding:20px;color:var(--muted);font-size:0.9rem}
+.spinner{display:inline-block;width:20px;height:20px;border:3px solid rgba(79,209,197,.2);border-top-color:var(--accent2);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* EMPTY STATE */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;color:var(--muted);text-align:center;gap:12px}
+.empty-state-icon{font-size:3rem;opacity:.4}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .main-container{flex-direction:column}
+  .sidebar{width:100%;border-right:none;border-bottom:1px solid #2a3f6e;max-height:140px}
+  #setup-screen .content{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <a class="home-btn" href="index.html">⌂ Home</a>
+    <div class="page-title">📋 Pengurusan Kelas</div>
+  </div>
+  <div class="nav-right">
+    <div class="auth-avatar" id="auth-avatar">?</div>
+    <div class="auth-name" id="auth-name">—</div>
+  </div>
+</nav>
+
+<!-- ══════════ MAIN ══════════ -->
+<div class="main-container">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2>Kelas Anda</h2>
+    <div class="class-list" id="class-list"></div>
+    <button class="sidebar-btn" onclick="openModal('new-class-modal')">+ Kelas Baru</button>
+  </div>
+
+  <!-- ══════════ SETUP SCREEN ══════════ -->
+  <div id="setup-screen" class="screen active">
+    <div class="content">
+      <!-- Left: Student Input -->
+      <div class="setup-panel">
+        <h3>📝 Murid</h3>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab(event,'manual-tab')">Manual</button>
+          <button class="tab-btn" onclick="switchTab(event,'bulk-tab')">Bulk Paste</button>
+        </div>
+        
+        <div id="manual-tab" class="tab-content active">
+          <div class="student-input">
+            <input type="text" id="manual-name" placeholder="Nama murid" onkeydown="if(event.key==='Enter')addStudent()">
+            <button onclick="addStudent()">Tambah</button>
+          </div>
+          <div class="student-list" id="student-list"></div>
+        </div>
+
+        <div id="bulk-tab" class="tab-content">
+          <textarea class="bulk-textarea" id="bulk-input" placeholder="Ali, Budi, Citra&#10;atau:&#10;Ali&#10;Budi&#10;Citra"></textarea>
+          <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="addBulkStudents()">Tambah Semua</button>
+        </div>
+      </div>
+
+      <!-- Right: Preview & Actions -->
+      <div class="setup-panel">
+        <h3>⚙️ Tetapan</h3>
+        <div class="preview-stats">
+          <div class="stat-line">
+            <strong>Bilangan Murid:</strong> <span id="student-count">0</span>
+          </div>
+          <div class="stat-line">
+            <strong>Kumpulan:</strong> <span id="group-count">—</span>
+          </div>
+        </div>
+        
+        <div class="setup-actions" style="margin-top:16px">
+          <label style="font-size:0.8rem;color:var(--muted);font-weight:700">Bilangan Kumpulan:</label>
+          <select id="group-num" style="padding:7px;background:var(--bg);border:1.5px solid #2e4880;border-radius:8px;color:var(--text);font-size:0.9rem">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+          
+          <button class="btn btn-primary" onclick="autoGrouping()" style="width:100%">🎲 Random Kumpulan</button>
+          <button class="btn btn-secondary" onclick="switchScreen('seating-screen')" style="width:100%">👁 Seating View</button>
+          <button class="btn btn-secondary" onclick="switchScreen('group-screen')" style="width:100%">⭕ Group View</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SEATING SCREEN ══════════ -->
+  <div id="seating-screen" class="screen">
+    <div class="view-toolbar">
+      <div class="view-toggle">
+        <button class="active" onclick="switchView('seating')">🪑 Seating</button>
+        <button onclick="switchView('group')">⭕ Groups</button>
+      </div>
+      <span style="font-size:0.85rem;color:var(--muted)">Drag seats untuk susun meja</span>
+    </div>
+    <div class="seating-canvas-wrap">
+      <svg class="seating-svg" id="seating-svg"></svg>
+    </div>
+  </div>
+
+  <!-- ══════════ GROUP SCREEN ══════════ -->
+  <div id="group-screen" class="screen">
+    <div class="view-toolbar">
+      <div class="view-toggle">
+        <button onclick="switchView('seating')">🪑 Seating</button>
+        <button class="active" onclick="switchView('group')">⭕ Groups</button>
+      </div>
+      <span style="font-size:0.85rem;color:var(--muted)">Murid tersusun dalam bulatan per kumpulan</span>
+    </div>
+    <div class="group-canvas-wrap">
+      <svg class="group-svg" id="group-svg"></svg>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════ MODALS ══════════ -->
+
+<!-- New Class Modal -->
+<div class="modal-overlay" id="new-class-modal">
+  <div class="modal-box">
+    <h3>+ Kelas Baru</h3>
+    <div class="form-group">
+      <label>Nama Kelas</label>
+      <input type="text" id="new-class-name" placeholder="Kelas 5A" onkeydown="if(event.key==='Enter')createClass()">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('new-class-modal')">Batal</button>
+      <button class="btn btn-primary" onclick="createClass()">Cipta</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Points Modal -->
+<div class="modal-overlay" id="add-points-modal">
+  <div class="modal-box">
+    <h3>Tambah Markah</h3>
+    <div class="form-group">
+      <label>Markah</label>
+      <input type="number" id="points-input" placeholder="5" value="5">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('add-points-modal')">Batal</button>
+      <button class="btn btn-primary" onclick="savePoints()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Student Popup -->
+<div class="popup-overlay" id="popup-overlay"></div>
+<div class="student-popup hidden" id="student-popup">
+  <button class="popup-close" onclick="closePopup()">✕</button>
+  <div class="popup-header">
+    <div class="popup-avatar" id="popup-avatar">A</div>
+    <div class="popup-name" id="popup-name">—</div>
+    <div class="popup-group">Kumpulan <span id="popup-group-num">—</span></div>
+  </div>
+  
+  <div class="popup-section">
+    <h4>Markah Individu</h4>
+    <div class="points-display">
+      <div class="points-number" id="popup-points">0</div>
+      <div class="points-label">mata</div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="openPointsModal()">+ Tambah Markah</button>
+  </div>
+
+  <div class="popup-section">
+    <h4>Reward</h4>
+    <div style="font-size:0.85rem;color:var(--muted)">Placeholder — function kemudian</div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════
+// SUPABASE + SESSION
+// ══════════════════════════════
+const SUPA_URL='https://kvmcjqisgqbxgtlhewtl.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2bWNqcWlzZ3FieGd0bGhld3RsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxOTEyODgsImV4cCI6MjEwNDc2NzI4OH0.Q2KhqItgbYKggvF2zNaPc-pYXShP4AbSTRDWRJzL9y4';
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
+
+const SESSION_KEY='eduplay_session';
+let currentUser=null;
+
+function loadSession(){
+  try{
+    const raw=localStorage.getItem(SESSION_KEY);
+    if(!raw)return null;
+    const s=JSON.parse(raw);
+    if(Date.now()>s.expires){localStorage.removeItem(SESSION_KEY);return null;}
+    currentUser=s.user;
+    return s;
+  }catch{return null;}
+}
+
+function renderAuthBar(){
+  if(!currentUser){window.location.href='index.html';return;}
+  const name=currentUser.display_name||currentUser.username;
+  const initials=name.substring(0,2).toUpperCase();
+  document.getElementById('auth-avatar').textContent=initials;
+  document.getElementById('auth-name').textContent=name;
+}
+
+// ══════════════════════════════
+// DATA & STATE
+// ══════════════════════════════
+const GROUP_HEX=['#fc5c7d','#6a82fb','#43e97b','#f7971e','#a18cd1','#4facfe'];
+let currentClass=null;
+let students=[];
+let grouping=null;
+let marks={};
+let groupMarks={};
+let seatingLayout={};
+
+function genId(){return'_'+Math.random().toString(36).substr(2,9)}
+
+// ══════════════════════════════
+// UI NAVIGATION
+// ══════════════════════════════
+function switchScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(id==='seating-screen')renderSeatingView();
+  else if(id==='group-screen')renderGroupView();
+}
+
+function switchView(view){
+  document.querySelectorAll('.view-toggle button').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  if(view==='seating')switchScreen('seating-screen');
+  else switchScreen('group-screen');
+}
+
+function switchTab(e,tabId){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+// ══════════════════════════════
+// MODALS
+// ══════════════════════════════
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+
+function openPopup(studentId){
+  const student=students.find(s=>s.id===studentId);
+  if(!student)return;
+  const initials=student.name.substring(0,2).toUpperCase();
+  document.getElementById('popup-avatar').textContent=initials;
+  document.getElementById('popup-avatar').style.background=GROUP_HEX[student.group_id-1]||'#999';
+  document.getElementById('popup-name').textContent=student.name;
+  document.getElementById('popup-group-num').textContent=student.group_id;
+  document.getElementById('popup-points').textContent=marks[studentId]||0;
+  document.getElementById('student-popup').classList.remove('hidden');
+  document.getElementById('popup-overlay').classList.add('open');
+  window.popupStudentId=studentId;
+}
+
+function closePopup(){
+  document.getElementById('student-popup').classList.add('hidden');
+  document.getElementById('popup-overlay').classList.remove('open');
+  delete window.popupStudentId;
+}
+
+function openPointsModal(){
+  if(!window.popupStudentId)return;
+  openModal('add-points-modal');
+  document.getElementById('points-input').value='5';
+  document.getElementById('points-input').focus();
+}
+
+async function savePoints(){
+  const val=parseInt(document.getElementById('points-input').value)||0;
+  if(!window.popupStudentId)return;
+  marks[window.popupStudentId]=(marks[window.popupStudentId]||0)+val;
+  if(currentClass)await saveClassData();
+  closeModal('add-points-modal');
+  openPopup(window.popupStudentId);
+}
+
+// ══════════════════════════════
+// CLASS MANAGEMENT
+// ══════════════════════════════
+async function createClass(){
+  const name=document.getElementById('new-class-name').value.trim();
+  if(!name){alert('Sila isi nama kelas');return;}
+  
+  const newClass={
+    user_id:currentUser.id,
+    name:name,
+    students:[],
+    grouping:null,
+    marks:{},
+    group_marks:{},
+    seating_layout:{}
+  };
+
+  const{data,error}=await sb.from('classes').insert(newClass).select().single();
+  if(error){alert('Error: '+error.message);return;}
+  
+  currentClass=data;
+  students=[];
+  marks={};
+  grouping=null;
+  seatingLayout={};
+  
+  closeModal('new-class-modal');
+  document.getElementById('new-class-name').value='';
+  renderClassList();
+  switchScreen('setup-screen');
+}
+
+async function loadClass(classId){
+  const{data,error}=await sb.from('classes').select('*').eq('id',classId).single();
+  if(error){alert('Error: '+error.message);return;}
+  
+  currentClass=data;
+  students=data.students||[];
+  marks=data.marks||{};
+  grouping=data.grouping||null;
+  groupMarks=data.group_marks||{};
+  seatingLayout=data.seating_layout||{};
+  
+  renderClassList();
+  updatePreview();
+  switchScreen('setup-screen');
+}
+
+async function loadClassList(){
+  if(!currentUser)return;
+  const{data,error}=await sb.from('classes').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  if(error)return;
+  if(!data.length){
+    document.getElementById('class-list').innerHTML='<div style="font-size:0.8rem;color:var(--muted);text-align:center;padding:10px">Tiada kelas. Buat baru!</div>';
+    return;
+  }
+  currentClass=data[0];
+  students=currentClass.students||[];
+  marks=currentClass.marks||{};
+  grouping=currentClass.grouping||null;
+  groupMarks=currentClass.group_marks||{};
+  seatingLayout=currentClass.seating_layout||{};
+  renderClassList();
+  updatePreview();
+}
+
+function renderClassList(){
+  const list=document.getElementById('class-list');
+  if(!currentUser)return;
+  sb.from('classes').select('id,name').eq('user_id',currentUser.id).order('created_at',{ascending:false}).then(({data})=>{
+    list.innerHTML='';
+    if(!data.length){list.innerHTML='<div style="font-size:0.8rem;color:var(--muted)">Tiada kelas</div>';return;}
+    data.forEach(c=>{
+      const btn=document.createElement('button');
+      btn.className='class-item'+(currentClass?.id===c.id?' active':'');
+      btn.textContent=c.name;
+      btn.onclick=()=>loadClass(c.id);
+      list.appendChild(btn);
+    });
+  });
+}
+
+// ══════════════════════════════
+// STUDENTS
+// ══════════════════════════════
+function addStudent(){
+  const name=document.getElementById('manual-name').value.trim();
+  if(!name)return;
+  students.push({id:genId(),name:name,group_id:0});
+  document.getElementById('manual-name').value='';
+  renderStudentList();
+  updatePreview();
+}
+
+function addBulkStudents(){
+  const text=document.getElementById('bulk-input').value.trim();
+  if(!text)return;
+  const names=text.split(/[\n,]+/).map(n=>n.trim()).filter(n=>n);
+  names.forEach(name=>{
+    if(name&&!students.find(s=>s.name===name)){
+      students.push({id:genId(),name:name,group_id:0});
+    }
+  });
+  document.getElementById('bulk-input').value='';
+  renderStudentList();
+  updatePreview();
+}
+
+function deleteStudent(id){
+  students=students.filter(s=>s.id!==id);
+  delete marks[id];
+  renderStudentList();
+  updatePreview();
+}
+
+function renderStudentList(){
+  const list=document.getElementById('student-list');
+  list.innerHTML='';
+  students.forEach(s=>{
+    const div=document.createElement('div');div.className='student-item';
+    div.innerHTML=`<span>${s.name}</span><button onclick="deleteStudent('${s.id}')">✕</button>`;
+    list.appendChild(div);
+  });
+}
+
+// ══════════════════════════════
+// GROUPING
+// ══════════════════════════════
+async function autoGrouping(){
+  const numGroups=parseInt(document.getElementById('group-num').value);
+  if(students.length===0){alert('Tambah murid dulu');return;}
+  
+  grouping=Array.from({length:numGroups}).map((_,i)=>({group_id:i+1,members:[]}));
+  const shuffled=[...students].sort(()=>Math.random()-.5);
+  shuffled.forEach((s,idx)=>{
+    const gid=(idx%numGroups);
+    grouping[gid].members.push(s.id);
+    s.group_id=gid+1;
+  });
+  
+  await saveClassData();
+  updatePreview();
+  switchScreen('seating-screen');
+}
+
+// ══════════════════════════════
+// SEATING VIEW
+// ══════════════════════════════
+function renderSeatingView(){
+  const svg=document.getElementById('seating-svg');
+  svg.innerHTML='';
+  
+  const rows=5,cols=6;
+  const padding=30,seatSize=70,spacing=100;
+  const width=cols*spacing+2*padding;
+  const height=rows*spacing+2*padding;
+  svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
+  
+  // Classroom bg (decorative)
+  const bg=document.createElementNS('http://www.w3.org/2000/svg','rect');
+  bg.setAttribute('width',width);bg.setAttribute('height',height);
+  bg.setAttribute('fill','rgba(255,255,255,.01)');
+  svg.appendChild(bg);
+  
+  // Seats
+  students.forEach((s,idx)=>{
+    const row=Math.floor(idx/cols);
+    const col=idx%cols;
+    const x=padding+col*spacing;
+    const y=padding+row*spacing;
+    
+    const stored=seatingLayout[s.id];
+    const sx=stored?stored.x:x;
+    const sy=stored?stored.y:y;
+    
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class','seat-group');
+    g.setAttribute('data-student-id',s.id);
+    g.style.cursor='pointer';
+    
+    const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('class','seat-rect');
+    rect.setAttribute('x',sx-seatSize/2);rect.setAttribute('y',sy-seatSize/2);
+    rect.setAttribute('width',seatSize);rect.setAttribute('height',seatSize);
+    rect.setAttribute('rx',8);
+    rect.style.fill=GROUP_HEX[s.group_id-1]||'#999';
+    
+    const text=document.createElementNS('http://www.w3.org/2000/svg','text');
+    text.setAttribute('class','seat-text');
+    text.setAttribute('x',sx);text.setAttribute('y',sy+5);
+    text.textContent=s.name.substring(0,8);
+    
+    g.appendChild(rect);g.appendChild(text);
+    g.addEventListener('click',()=>openPopup(s.id));
+    svg.appendChild(g);
+  });
+  
+  // Make draggable (simplified)
+  makeSeatsDraggable(svg,padding,spacing,seatSize);
+}
+
+function makeSeatsDraggable(svg,padding,spacing,seatSize){
+  let dragging=null;
+  svg.addEventListener('mousedown',e=>{
+    const g=e.target.closest('.seat-group');
+    if(!g)return;
+    dragging=g;
+    g.querySelector('.seat-rect').classList.add('dragging');
+  });
+  svg.addEventListener('mousemove',e=>{
+    if(!dragging)return;
+    const rect=svg.getBoundingClientRect();
+    const x=(e.clientX-rect.left)/rect.width*svg.viewBox.baseVal.width;
+    const y=(e.clientY-rect.top)/rect.height*svg.viewBox.baseVal.height;
+    const studentId=dragging.getAttribute('data-student-id');
+    seatingLayout[studentId]={x,y};
+    
+    dragging.querySelector('.seat-rect').setAttribute('x',x-seatSize/2);
+    dragging.querySelector('.seat-rect').setAttribute('y',y-seatSize/2);
+    dragging.querySelector('.seat-text').setAttribute('x',x);
+    dragging.querySelector('.seat-text').setAttribute('y',y+5);
+  });
+  svg.addEventListener('mouseup',async()=>{
+    if(dragging)dragging.querySelector('.seat-rect').classList.remove('dragging');
+    dragging=null;
+    if(currentClass)await saveClassData();
+  });
+}
+
+// ══════════════════════════════
+// GROUP VIEW
+// ══════════════════════════════
+function renderGroupView(){
+  const svg=document.getElementById('group-svg');
+  svg.innerHTML='';
+  
+  if(!grouping||grouping.length===0){
+    svg.innerHTML='<text x="50%" y="50%" text-anchor="middle" fill="var(--muted)" font-size="16">Buat random kumpulan dulu</text>';
+    return;
+  }
+  
+  svg.setAttribute('viewBox','0 0 1000 600');
+  const circleRadius=120;
+  const groupCount=grouping.length;
+  const centerX=500,centerY=300;
+  const angleStep=360/groupCount;
+  
+  grouping.forEach((group,idx)=>{
+    const angle=(idx*angleStep)*Math.PI/180;
+    const gx=centerX+200*Math.cos(angle);
+    const gy=centerY+200*Math.sin(angle);
+    
+    // Group circle (bg)
+    const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx',gx);circle.setAttribute('cy',gy);circle.setAttribute('r',circleRadius);
+    circle.setAttribute('class','group-circle');
+    circle.setAttribute('fill',GROUP_HEX[idx]);
+    svg.appendChild(circle);
+    
+    // Students in circle
+    const memberCount=group.members.length;
+    group.members.forEach((studentId,mid)=>{
+      const memberAngle=(mid*360/memberCount)*Math.PI/180;
+      const sx=gx+80*Math.cos(memberAngle);
+      const sy=gy+80*Math.sin(memberAngle);
+      
+      const student=students.find(s=>s.id===studentId);
+      if(!student)return;
+      
+      const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+      g.setAttribute('class','group-student-bubble');
+      g.setAttribute('data-student-id',studentId);
+      g.style.cursor='pointer';
+      g.addEventListener('click',()=>openPopup(studentId));
+      
+      const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('class','student-bubble-circle');
+      c.setAttribute('cx',sx);c.setAttribute('cy',sy);c.setAttribute('r',16);
+      c.setAttribute('fill',GROUP_HEX[idx]);c.setAttribute('stroke','#fff');c.setAttribute('stroke-width',2);
+      
+      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',sx);t.setAttribute('y',sy+4);t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-size',12);t.setAttribute('font-weight',700);t.setAttribute('fill','#fff');
+      t.textContent=student.name.substring(0,1);
+      
+      g.appendChild(c);g.appendChild(t);
+      svg.appendChild(g);
+    });
+  });
+}
+
+// ══════════════════════════════
+// SAVE & PREVIEW
+// ══════════════════════════════
+async function saveClassData(){
+  if(!currentClass)return;
+  await sb.from('classes').update({
+    students:students,
+    grouping:grouping,
+    marks:marks,
+    group_marks:groupMarks,
+    seating_layout:seatingLayout,
+    updated_at:new Date().toISOString()
+  }).eq('id',currentClass.id);
+}
+
+function updatePreview(){
+  document.getElementById('student-count').textContent=students.length;
+  const gn=grouping?grouping.length:'—';
+  document.getElementById('group-count').textContent=gn;
+}
+
+// ══════════════════════════════
+// INIT
+// ══════════════════════════════
+loadSession();
+renderAuthBar();
+loadClassList();
+</script>
+</body>
+</html>
