@@ -12,298 +12,262 @@
   --bg:#0f1b35;--surface:#192847;--surface2:#1e3259;
   --accent:#f7c948;--accent2:#4fd1c5;--correct:#48bb78;--wrong:#fc5c7d;
   --text:#eef2ff;--muted:#8899bb;--radius:16px;--font:'Nunito',sans-serif;--fd:'Baloo 2',cursive;
-  --g1:#fc5c7d;--g2:#6a82fb;--g3:#43e97b;--g4:#f7971e;--g5:#a18cd1;--g6:#4facfe;
 }
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden}
-.screen{display:none;width:100%;height:100vh;flex-direction:column}
-.screen.active{display:flex}
+body{font-family:var(--font);background:var(--bg);color:var(--text);height:100vh;overflow:hidden}
+.app{display:flex;flex-direction:column;height:100vh}
 
 /* NAV */
-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(25,40,71,.95);border-bottom:1px solid #2a3f6e;gap:12px;flex-shrink:0;z-index:10}
+nav{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:rgba(15,27,53,.97);border-bottom:1px solid #2a3f6e;gap:12px;flex-shrink:0;z-index:100}
 .nav-left{display:flex;align-items:center;gap:12px}
-.home-btn{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1.5px solid #2e4880;color:var(--muted);font-family:var(--font);font-size:0.8rem;font-weight:700;padding:6px 13px;border-radius:9px;text-decoration:none;cursor:pointer;transition:color .15s}
+.home-btn{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1.5px solid #2e4880;color:var(--muted);font-size:0.8rem;font-weight:700;padding:6px 13px;border-radius:9px;text-decoration:none;cursor:pointer;transition:all .15s}
 .home-btn:hover{color:var(--text);border-color:var(--accent2)}
-.page-title{font-family:var(--fd);font-size:1.2rem;font-weight:900;color:var(--accent)}
+.page-title{font-family:var(--fd);font-size:1.15rem;font-weight:900;color:var(--accent)}
 .nav-right{display:flex;align-items:center;gap:8px;font-size:0.8rem}
 .auth-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.75rem;color:#0f1b35}
-.auth-name{color:var(--text);font-weight:700;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.auth-name{font-weight:700;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* BUTTONS */
-.btn{padding:9px 18px;border:none;border-radius:10px;font-family:var(--font);font-weight:700;font-size:0.9rem;cursor:pointer;transition:transform .15s,opacity .15s}
+/* LAYOUT */
+.body-layout{flex:1;display:flex;min-height:0}
+
+/* SIDEBAR */
+.sidebar{width:220px;background:var(--surface);border-right:1px solid #2a3f6e;padding:14px;overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column}
+.sidebar h2{font-size:0.72rem;color:var(--accent2);font-weight:700;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.class-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.class-item{padding:8px 11px;background:var(--surface2);border:1.5px solid transparent;border-radius:9px;cursor:pointer;font-size:0.83rem;font-weight:700;transition:all .15s}
+.class-item:hover{border-color:var(--accent2)}
+.class-item.active{background:var(--accent);color:#1a1200;border-color:var(--accent)}
+.sidebar-btn{width:100%;padding:9px;background:var(--accent);color:#1a1200;border:none;border-radius:9px;font-weight:800;font-size:0.8rem;cursor:pointer;margin-bottom:6px}
+.sidebar-empty{font-size:0.78rem;color:var(--muted);text-align:center;padding:14px 8px}
+
+/* TOOLBAR (floats over scene) */
+.scene-toolbar{position:absolute;top:14px;left:14px;display:flex;gap:8px;z-index:60;flex-wrap:wrap}
+.tool-btn{display:flex;align-items:center;gap:6px;background:rgba(25,40,71,.92);border:1.5px solid #2e4880;color:var(--text);padding:8px 14px;border-radius:12px;font-size:0.82rem;font-weight:700;cursor:pointer;transition:all .15s;backdrop-filter:blur(6px)}
+.tool-btn:hover{border-color:var(--accent2);transform:translateY(-2px)}
+
+.class-info{position:absolute;top:14px;right:14px;background:rgba(25,40,71,.92);border:1.5px solid #2e4880;border-radius:12px;padding:10px 16px;z-index:60;font-size:0.8rem;backdrop-filter:blur(6px)}
+.class-info-title{font-family:var(--fd);font-weight:800;color:var(--accent);font-size:0.95rem;margin-bottom:4px}
+.class-info-row{color:var(--muted);display:flex;gap:6px}
+.class-info-row strong{color:var(--accent2)}
+
+/* SCENE */
+.scene-wrap{flex:1;position:relative;overflow:hidden;background:#0a1428}
+.scene-svg{width:100%;height:100%;display:block}
+
+/* Character label */
+.char-label{font-family:var(--font);font-weight:800;font-size:11px;text-anchor:middle;pointer-events:none;fill:#fff;paint-order:stroke;stroke:#0f1b35;stroke-width:2.5px}
+
+/* EMPTY STATE */
+.empty-scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--muted);text-align:center;padding:20px}
+.empty-scene-icon{font-size:3.4rem;opacity:.5}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:400;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--surface2);border:1.5px solid #3a5080;border-radius:20px;padding:26px;max-width:440px;width:100%;max-height:85vh;overflow-y:auto}
+.modal-box h3{font-family:var(--fd);font-size:1.2rem;color:var(--text);margin-bottom:16px}
+.form-group{margin-bottom:12px}
+.form-group label{font-size:0.78rem;color:var(--muted);margin-bottom:4px;display:block;font-weight:700}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 12px;background:var(--bg);border:1.5px solid #2e4880;border-radius:9px;color:var(--text);font-family:var(--font);font-size:0.9rem;outline:none}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--accent2)}
+.btn{padding:9px 18px;border:none;border-radius:10px;font-family:var(--font);font-weight:700;font-size:0.88rem;cursor:pointer;transition:transform .15s,opacity .15s}
 .btn:hover{transform:translateY(-2px);opacity:.92}
 .btn-primary{background:var(--accent);color:#1a1200}
 .btn-secondary{background:var(--surface2);color:var(--text);border:1.5px solid #2e4880}
-.btn-sm{padding:6px 12px;font-size:0.8rem}
-.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-
-/* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:400;align-items:center;justify-content:center}
-.modal-overlay.open{display:flex}
-.modal-box{background:var(--surface2);border:1.5px solid #3a5080;border-radius:18px;padding:24px;max-width:420px;width:90%}
-.modal-box h3{font-family:var(--fd);font-size:1.2rem;color:var(--text);margin-bottom:14px}
-.form-group{margin-bottom:10px}
-.form-group label{font-size:0.78rem;color:var(--muted);margin-bottom:3px;display:block;font-weight:700}
-.form-group input,.form-group textarea{width:100%;padding:8px 11px;background:var(--bg);border:1.5px solid #2e4880;border-radius:9px;color:var(--text);font-family:var(--font);font-size:0.9rem;outline:none;resize:vertical}
-.form-group input:focus,.form-group textarea:focus{border-color:var(--accent2)}
-.modal-actions{display:flex;gap:8px;margin-top:12px}
+.modal-actions{display:flex;gap:8px;margin-top:14px}
 .modal-actions .btn{flex:1}
 
-/* MAIN LAYOUT */
-.main-container{display:flex;flex:1;min-height:0;overflow:hidden}
-.sidebar{width:280px;background:var(--surface);border-right:1px solid #2a3f6e;padding:14px;overflow-y:auto;flex-shrink:0}
-.sidebar h2{font-size:0.8rem;color:var(--accent2);font-weight:700;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
-.class-list{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
-.class-item{padding:8px 11px;background:var(--surface2);border:1.5px solid transparent;border-radius:9px;cursor:pointer;font-size:0.85rem;font-weight:600;transition:border-color .15s,background .15s}
-.class-item:hover{border-color:var(--accent2)}
-.class-item.active{background:var(--accent);color:#1a1200;border-color:var(--accent)}
-.sidebar-btn{width:100%;padding:8px;background:var(--accent);color:#1a1200;border:none;border-radius:9px;font-weight:700;font-size:0.8rem;cursor:pointer;margin-bottom:8px}
-
-/* CONTENT */
-.content{flex:1;display:flex;flex-direction:column;overflow:hidden}
-
-/* SCREEN: Setup */
-#setup-screen .content{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px;overflow-y:auto}
-.setup-panel{background:var(--surface);border-radius:12px;padding:16px;border:1px solid #2a3f6e}
-.setup-panel h3{font-size:0.9rem;color:var(--accent2);font-weight:700;margin-bottom:12px}
+/* Tabs for student manage modal */
 .tabs{display:flex;gap:6px;margin-bottom:12px;border-bottom:1px solid #2e4880}
-.tab-btn{padding:6px 12px;background:none;border:none;color:var(--muted);font-size:0.8rem;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+.tab-btn{padding:6px 12px;background:none;border:none;color:var(--muted);font-size:0.8rem;font-weight:700;cursor:pointer;border-bottom:2px solid transparent}
 .tab-btn.active{color:var(--accent);border-color:var(--accent)}
 .tab-content{display:none}
 .tab-content.active{display:block}
-.student-input{display:flex;gap:6px;margin-bottom:10px}
-.student-input input{flex:1;padding:7px 9px;background:var(--bg);border:1.5px solid #2e4880;border-radius:8px;color:var(--text);font-size:0.85rem}
-.student-input button{padding:7px 12px;background:var(--accent);color:#1a1200;border:none;border-radius:8px;font-weight:700;font-size:0.8rem;cursor:pointer}
-.student-list{max-height:200px;overflow-y:auto}
-.student-item{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:var(--bg);border-radius:7px;margin-bottom:4px;font-size:0.8rem}
-.student-item button{background:var(--wrong);color:#fff;border:none;border-radius:5px;padding:2px 8px;font-size:0.7rem;cursor:pointer}
-.bulk-textarea{width:100%;min-height:120px;padding:9px;background:var(--bg);border:1.5px solid #2e4880;border-radius:9px;color:var(--text);font-family:monospace;font-size:0.8rem;resize:none}
-.preview-stats{display:flex;flex-direction:column;gap:8px;font-size:0.9rem}
-.stat-line{padding:8px;background:var(--bg);border-radius:8px;border-left:3px solid var(--accent2)}
-.setup-actions{display:flex;flex-direction:column;gap:8px}
-.setup-actions .btn{width:100%}
+.inline-input-row{display:flex;gap:6px;margin-bottom:10px}
+.inline-input-row input{flex:1}
+.inline-input-row button{padding:8px 14px;background:var(--accent);color:#1a1200;border:none;border-radius:8px;font-weight:700;font-size:0.8rem;cursor:pointer;white-space:nowrap}
+.roster-list{max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:5px}
+.roster-item{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--bg);border-radius:8px;font-size:0.83rem}
+.roster-item button{background:var(--wrong);color:#fff;border:none;border-radius:6px;padding:3px 9px;font-size:0.72rem;cursor:pointer}
+.bulk-textarea{width:100%;min-height:110px;font-family:monospace;font-size:0.82rem;resize:vertical}
 
-/* SCREEN: Seating View */
-#seating-screen .content{display:flex;flex-direction:column;padding:16px}
-.view-toolbar{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #2e4880}
-.view-toggle{display:flex;gap:6px}
-.view-toggle button{padding:6px 12px;background:var(--surface2);border:1.5px solid #2e4880;color:var(--muted);border-radius:8px;font-size:0.8rem;font-weight:700;cursor:pointer;transition:border-color .15s,color .15s}
-.view-toggle button.active{border-color:var(--accent2);color:var(--accent2)}
-.seating-canvas-wrap{flex:1;background:rgba(0,0,0,.15);border-radius:12px;border:1px solid #2a3f6e;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center}
-svg.seating-svg{width:100%;height:100%;cursor:grab}
-svg.seating-svg:active{cursor:grabbing}
-.classroom-bg{opacity:.08}
-.seat-group{cursor:pointer}
-.seat-rect{fill:#192847;stroke:#2e4880;stroke-width:2;transition:fill .15s,stroke .15s}
-.seat-rect.dragging{fill:#3a5080;stroke:var(--accent2)}
-.seat-text{font-family:var(--font);font-size:11px;font-weight:700;text-anchor:middle;pointer-events:none;fill:var(--text)}
+/* Leaderboard modal */
+.lb-row{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg);border-radius:9px;margin-bottom:6px}
+.lb-rank{font-family:var(--fd);font-weight:900;color:var(--accent);width:22px}
+.lb-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.lb-name{flex:1;font-weight:700;font-size:0.85rem}
+.lb-pts{font-weight:800;color:var(--accent2);font-size:0.85rem}
 
-/* SCREEN: Group View */
-#group-screen .content{display:flex;flex-direction:column;padding:16px}
-.group-canvas-wrap{flex:1;background:rgba(0,0,0,.15);border-radius:12px;border:1px solid #2a3f6e;overflow:hidden;position:relative}
-svg.group-svg{width:100%;height:100%}
-.group-circle{opacity:.15;pointer-events:none}
-.group-student-bubble{cursor:pointer}
-.student-bubble-circle{transition:r .15s}
-.student-bubble-circle:hover{r:18}
-
-/* STUDENT POPUP */
-.student-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface2);border:2px solid var(--accent2);border-radius:16px;padding:24px;max-width:340px;width:90%;z-index:500;box-shadow:0 8px 40px rgba(0,0,0,.5)}
-.student-popup.hidden{display:none}
-.popup-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer}
-.popup-header{text-align:center;margin-bottom:18px}
-.popup-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:1.8rem;font-weight:900;color:#fff;margin:0 auto 8px}
-.popup-name{font-family:var(--fd);font-size:1.3rem;font-weight:800;color:var(--text)}
-.popup-group{font-size:0.8rem;color:var(--muted);margin-top:3px}
-.popup-section{margin-bottom:16px;padding:12px;background:var(--bg);border-radius:10px}
-.popup-section h4{font-size:0.75rem;color:var(--accent2);font-weight:700;text-transform:uppercase;margin-bottom:6px;letter-spacing:.3px}
-.points-display{text-align:center}
-.points-number{font-family:var(--fd);font-size:2.2rem;font-weight:900;color:var(--accent);line-height:1}
-.points-label{font-size:0.75rem;color:var(--muted);margin-top:3px}
-.popup-actions{display:flex;flex-direction:column;gap:8px}
-.popup-actions button{padding:8px;background:var(--accent);color:#1a1200;border:none;border-radius:9px;font-weight:700;font-size:0.85rem;cursor:pointer}
-.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;display:none}
+/* Student popup */
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:400;display:none}
 .popup-overlay.open{display:block}
+.student-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface2);border:2px solid var(--accent2);border-radius:18px;padding:24px;max-width:340px;width:90%;z-index:401;box-shadow:0 12px 40px rgba(0,0,0,.55)}
+.student-popup.hidden{display:none}
+.popup-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer}
+.popup-header{text-align:center;margin-bottom:16px}
+.popup-avatar-wrap{width:64px;height:64px;margin:0 auto 8px}
+.popup-name{font-family:var(--fd);font-size:1.25rem;font-weight:800}
+.popup-group-tag{font-size:0.78rem;color:var(--muted);margin-top:3px}
+.popup-section{margin-bottom:14px;padding:12px;background:var(--bg);border-radius:10px}
+.popup-section h4{font-size:0.72rem;color:var(--accent2);font-weight:700;text-transform:uppercase;margin-bottom:6px;letter-spacing:.3px}
+.points-display{text-align:center;font-family:var(--fd);font-size:2.2rem;font-weight:900;color:var(--accent)}
+.popup-actions button{width:100%;padding:9px;background:var(--accent);color:#1a1200;border:none;border-radius:9px;font-weight:700;font-size:0.85rem;cursor:pointer;margin-top:8px}
 
-/* LOADING */
-.loading{text-align:center;padding:20px;color:var(--muted);font-size:0.9rem}
-.spinner{display:inline-block;width:20px;height:20px;border:3px solid rgba(79,209,197,.2);border-top-color:var(--accent2);border-radius:50%;animation:spin .8s linear infinite}
+.loading-screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--muted)}
+.spinner{width:36px;height:36px;border:4px solid rgba(79,209,197,.2);border-top-color:var(--accent2);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* EMPTY STATE */
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;color:var(--muted);text-align:center;gap:12px}
-.empty-state-icon{font-size:3rem;opacity:.4}
-
-/* RESPONSIVE */
-@media(max-width:900px){
-  .main-container{flex-direction:column}
-  .sidebar{width:100%;border-right:none;border-bottom:1px solid #2a3f6e;max-height:140px}
-  #setup-screen .content{grid-template-columns:1fr}
-}
 </style>
 </head>
 <body>
+<div class="app">
+  <!-- NAV -->
+  <nav>
+    <div class="nav-left">
+      <a class="home-btn" href="index.html">⌂ Home</a>
+      <div class="page-title">🎮 Pengurusan Kelas</div>
+    </div>
+    <div class="nav-right">
+      <div class="auth-avatar" id="auth-avatar">?</div>
+      <div class="auth-name" id="auth-name">—</div>
+    </div>
+  </nav>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-left">
-    <a class="home-btn" href="index.html">⌂ Home</a>
-    <div class="page-title">📋 Pengurusan Kelas</div>
-  </div>
-  <div class="nav-right">
-    <div class="auth-avatar" id="auth-avatar">?</div>
-    <div class="auth-name" id="auth-name">—</div>
-  </div>
-</nav>
+  <div class="body-layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <h2>Kelas Anda</h2>
+      <div class="class-list" id="class-list"><div class="sidebar-empty">Memuatkan...</div></div>
+      <button class="sidebar-btn" onclick="openModal('new-class-modal')">+ Kelas Baru</button>
+    </div>
 
-<!-- ══════════ MAIN ══════════ -->
-<div class="main-container">
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <h2>Kelas Anda</h2>
-    <div class="class-list" id="class-list"></div>
-    <button class="sidebar-btn" onclick="openModal('new-class-modal')">+ Kelas Baru</button>
-  </div>
-
-  <!-- ══════════ SETUP SCREEN ══════════ -->
-  <div id="setup-screen" class="screen active">
-    <div class="content">
-      <!-- Left: Student Input -->
-      <div class="setup-panel">
-        <h3>📝 Murid</h3>
-        <div class="tabs">
-          <button class="tab-btn active" onclick="switchTab(event,'manual-tab')">Manual</button>
-          <button class="tab-btn" onclick="switchTab(event,'bulk-tab')">Bulk Paste</button>
-        </div>
-        
-        <div id="manual-tab" class="tab-content active">
-          <div class="student-input">
-            <input type="text" id="manual-name" placeholder="Nama murid" onkeydown="if(event.key==='Enter')addStudent()">
-            <button onclick="addStudent()">Tambah</button>
-          </div>
-          <div class="student-list" id="student-list"></div>
-        </div>
-
-        <div id="bulk-tab" class="tab-content">
-          <textarea class="bulk-textarea" id="bulk-input" placeholder="Ali, Budi, Citra&#10;atau:&#10;Ali&#10;Budi&#10;Citra"></textarea>
-          <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="addBulkStudents()">Tambah Semua</button>
-        </div>
+    <!-- SCENE -->
+    <div class="scene-wrap" id="scene-wrap">
+      <div class="scene-toolbar">
+        <button class="tool-btn" onclick="openModal('roster-modal')">👥 Uruskan Murid</button>
+        <button class="tool-btn" onclick="openModal('group-modal')">🎲 Kumpulan</button>
+        <button class="tool-btn" onclick="showLeaderboard()">🏆 Papan Markah</button>
       </div>
-
-      <!-- Right: Preview & Actions -->
-      <div class="setup-panel">
-        <h3>⚙️ Tetapan</h3>
-        <div class="preview-stats">
-          <div class="stat-line">
-            <strong>Bilangan Murid:</strong> <span id="student-count">0</span>
-          </div>
-          <div class="stat-line">
-            <strong>Kumpulan:</strong> <span id="group-count">—</span>
-          </div>
-        </div>
-        
-        <div class="setup-actions" style="margin-top:16px">
-          <label style="font-size:0.8rem;color:var(--muted);font-weight:700">Bilangan Kumpulan:</label>
-          <select id="group-num" style="padding:7px;background:var(--bg);border:1.5px solid #2e4880;border-radius:8px;color:var(--text);font-size:0.9rem">
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4" selected>4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-          </select>
-          
-          <button class="btn btn-primary" onclick="autoGrouping()" style="width:100%">🎲 Random Kumpulan</button>
-          <button class="btn btn-secondary" onclick="switchScreen('seating-screen')" style="width:100%">👁 Seating View</button>
-          <button class="btn btn-secondary" onclick="switchScreen('group-screen')" style="width:100%">⭕ Group View</button>
-        </div>
+      <div class="class-info" id="class-info-box" style="display:none">
+        <div class="class-info-title" id="class-title">—</div>
+        <div class="class-info-row"><span>Murid:</span> <strong id="info-students">0</strong></div>
+        <div class="class-info-row"><span>Kumpulan:</span> <strong id="info-groups">0</strong></div>
+      </div>
+      <svg class="scene-svg" id="scene-svg"></svg>
+      <div class="empty-scene" id="empty-scene" style="display:none">
+        <div class="empty-scene-icon">🏫</div>
+        <div style="font-family:'Baloo 2',cursive;font-size:1.2rem;font-weight:800;color:var(--text)">Tiada kelas lagi</div>
+        <div style="font-size:0.85rem;max-width:280px">Cipta kelas baru untuk mula bina bilik darjah anda.</div>
+        <button class="btn btn-primary" onclick="openModal('new-class-modal')">+ Cipta Kelas</button>
+      </div>
+      <div class="loading-screen" id="loading-screen">
+        <div class="spinner"></div><div>Memuatkan kelas...</div>
       </div>
     </div>
   </div>
-
-  <!-- ══════════ SEATING SCREEN ══════════ -->
-  <div id="seating-screen" class="screen">
-    <div class="view-toolbar">
-      <div class="view-toggle">
-        <button class="active" onclick="switchView('seating')">🪑 Seating</button>
-        <button onclick="switchView('group')">⭕ Groups</button>
-      </div>
-      <span style="font-size:0.85rem;color:var(--muted)">Drag seats untuk susun meja</span>
-    </div>
-    <div class="seating-canvas-wrap">
-      <svg class="seating-svg" id="seating-svg"></svg>
-    </div>
-  </div>
-
-  <!-- ══════════ GROUP SCREEN ══════════ -->
-  <div id="group-screen" class="screen">
-    <div class="view-toolbar">
-      <div class="view-toggle">
-        <button onclick="switchView('seating')">🪑 Seating</button>
-        <button class="active" onclick="switchView('group')">⭕ Groups</button>
-      </div>
-      <span style="font-size:0.85rem;color:var(--muted)">Murid tersusun dalam bulatan per kumpulan</span>
-    </div>
-    <div class="group-canvas-wrap">
-      <svg class="group-svg" id="group-svg"></svg>
-    </div>
-  </div>
-
 </div>
 
-<!-- ══════════ MODALS ══════════ -->
-
-<!-- New Class Modal -->
+<!-- NEW CLASS MODAL -->
 <div class="modal-overlay" id="new-class-modal">
   <div class="modal-box">
-    <h3>+ Kelas Baru</h3>
+    <h3>🎓 Kelas Baru</h3>
     <div class="form-group">
       <label>Nama Kelas</label>
-      <input type="text" id="new-class-name" placeholder="Kelas 5A" onkeydown="if(event.key==='Enter')createClass()">
+      <input type="text" id="new-class-name" placeholder="Kelas 5A" onkeydown="if(event.key==='Enter')createNewClass()">
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal('new-class-modal')">Batal</button>
-      <button class="btn btn-primary" onclick="createClass()">Cipta</button>
+      <button class="btn btn-primary" onclick="createNewClass()">Cipta</button>
     </div>
   </div>
 </div>
 
-<!-- Add Points Modal -->
-<div class="modal-overlay" id="add-points-modal">
+<!-- ROSTER / MANAGE STUDENTS MODAL -->
+<div class="modal-overlay" id="roster-modal">
   <div class="modal-box">
-    <h3>Tambah Markah</h3>
-    <div class="form-group">
-      <label>Markah</label>
-      <input type="number" id="points-input" placeholder="5" value="5">
+    <h3>👥 Uruskan Murid</h3>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchRosterTab(event,'manual-tab')">Manual</button>
+      <button class="tab-btn" onclick="switchRosterTab(event,'bulk-tab')">Bulk Paste</button>
+    </div>
+    <div id="manual-tab" class="tab-content active">
+      <div class="inline-input-row">
+        <input type="text" id="manual-name-input" placeholder="Nama murid" onkeydown="if(event.key==='Enter')addStudentManual()">
+        <button onclick="addStudentManual()">Tambah</button>
+      </div>
+    </div>
+    <div id="bulk-tab" class="tab-content">
+      <textarea class="bulk-textarea" id="bulk-name-input" placeholder="Ali, Budi, Citra&#10;atau satu nama setiap baris"></textarea>
+      <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="addStudentsBulk()">Tambah Semua</button>
+    </div>
+    <div style="margin-top:14px">
+      <label style="font-size:0.78rem;color:var(--muted);font-weight:700;display:block;margin-bottom:6px">Senarai Murid (<span id="roster-count">0</span>)</label>
+      <div class="roster-list" id="roster-list"></div>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-secondary" onclick="closeModal('add-points-modal')">Batal</button>
+      <button class="btn btn-secondary" onclick="closeModal('roster-modal')">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- GROUPING MODAL -->
+<div class="modal-overlay" id="group-modal">
+  <div class="modal-box">
+    <h3>🎲 Bahagi Kumpulan</h3>
+    <div class="form-group">
+      <label>Bilangan Kumpulan</label>
+      <select id="group-num-select">
+        <option value="2">2 kumpulan</option>
+        <option value="3">3 kumpulan</option>
+        <option value="4" selected>4 kumpulan</option>
+        <option value="5">5 kumpulan</option>
+        <option value="6">6 kumpulan</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('group-modal')">Batal</button>
+      <button class="btn btn-primary" onclick="doAutoGrouping()">🎲 Bahagi Secara Rawak</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD MODAL -->
+<div class="modal-overlay" id="leaderboard-modal">
+  <div class="modal-box">
+    <h3>🏆 Papan Markah</h3>
+    <div id="leaderboard-list"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('leaderboard-modal')" style="width:100%">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- POINTS MODAL -->
+<div class="modal-overlay" id="points-modal">
+  <div class="modal-box">
+    <h3>➕ Tambah Markah</h3>
+    <div class="form-group">
+      <label>Mata (boleh negatif)</label>
+      <input type="number" id="points-input" value="5">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('points-modal')">Batal</button>
       <button class="btn btn-primary" onclick="savePoints()">Simpan</button>
     </div>
   </div>
 </div>
 
-<!-- Student Popup -->
-<div class="popup-overlay" id="popup-overlay"></div>
+<!-- STUDENT POPUP -->
+<div class="popup-overlay" id="popup-overlay" onclick="closeStudentPopup()"></div>
 <div class="student-popup hidden" id="student-popup">
-  <button class="popup-close" onclick="closePopup()">✕</button>
+  <button class="popup-close" onclick="closeStudentPopup()">✕</button>
   <div class="popup-header">
-    <div class="popup-avatar" id="popup-avatar">A</div>
+    <svg class="popup-avatar-wrap" id="popup-avatar-svg" viewBox="0 0 100 100"></svg>
     <div class="popup-name" id="popup-name">—</div>
-    <div class="popup-group">Kumpulan <span id="popup-group-num">—</span></div>
+    <div class="popup-group-tag" id="popup-group-tag">—</div>
   </div>
-  
   <div class="popup-section">
-    <h4>Markah Individu</h4>
-    <div class="points-display">
-      <div class="points-number" id="popup-points">0</div>
-      <div class="points-label">mata</div>
-    </div>
-    <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="openPointsModal()">+ Tambah Markah</button>
-  </div>
-
-  <div class="popup-section">
-    <h4>Reward</h4>
-    <div style="font-size:0.85rem;color:var(--muted)">Placeholder — function kemudian</div>
+    <h4>📊 Markah Individu</h4>
+    <div class="points-display" id="popup-points">0</div>
+    <div class="popup-actions"><button onclick="openAddPointsModal()">+ Tambah Markah</button></div>
   </div>
 </div>
 
@@ -316,7 +280,11 @@ const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
 
 const SESSION_KEY='eduplay_session';
-let currentUser=null;
+let currentUser=null,currentClass=null;
+let students=[],marks={},grouping=null;
+let allClasses=[];
+
+const GROUP_HEX=['#fc5c7d','#6a82fb','#43e97b','#f7971e','#a18cd1','#4facfe'];
 
 function loadSession(){
   try{
@@ -324,416 +292,383 @@ function loadSession(){
     if(!raw)return null;
     const s=JSON.parse(raw);
     if(Date.now()>s.expires){localStorage.removeItem(SESSION_KEY);return null;}
-    currentUser=s.user;
-    return s;
+    currentUser=s.user;return s;
   }catch{return null;}
 }
-
 function renderAuthBar(){
   if(!currentUser){window.location.href='index.html';return;}
   const name=currentUser.display_name||currentUser.username;
-  const initials=name.substring(0,2).toUpperCase();
-  document.getElementById('auth-avatar').textContent=initials;
+  document.getElementById('auth-avatar').textContent=name.substring(0,2).toUpperCase();
   document.getElementById('auth-name').textContent=name;
 }
-
-// ══════════════════════════════
-// DATA & STATE
-// ══════════════════════════════
-const GROUP_HEX=['#fc5c7d','#6a82fb','#43e97b','#f7971e','#a18cd1','#4facfe'];
-let currentClass=null;
-let students=[];
-let grouping=null;
-let marks={};
-let groupMarks={};
-let seatingLayout={};
-
 function genId(){return'_'+Math.random().toString(36).substr(2,9)}
 
 // ══════════════════════════════
-// UI NAVIGATION
+// MODALS
 // ══════════════════════════════
-function switchScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  if(id==='seating-screen')renderSeatingView();
-  else if(id==='group-screen')renderGroupView();
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  if(id==='roster-modal')renderRosterList();
 }
-
-function switchView(view){
-  document.querySelectorAll('.view-toggle button').forEach(b=>b.classList.remove('active'));
-  event.target.classList.add('active');
-  if(view==='seating')switchScreen('seating-screen');
-  else switchScreen('group-screen');
-}
-
-function switchTab(e,tabId){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function switchRosterTab(e,tabId){
+  document.querySelectorAll('#roster-modal .tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#roster-modal .tab-content').forEach(c=>c.classList.remove('active'));
   e.target.classList.add('active');
   document.getElementById(tabId).classList.add('active');
 }
 
 // ══════════════════════════════
-// MODALS
-// ══════════════════════════════
-function openModal(id){document.getElementById(id).classList.add('open')}
-function closeModal(id){document.getElementById(id).classList.remove('open')}
-
-function openPopup(studentId){
-  const student=students.find(s=>s.id===studentId);
-  if(!student)return;
-  const initials=student.name.substring(0,2).toUpperCase();
-  document.getElementById('popup-avatar').textContent=initials;
-  document.getElementById('popup-avatar').style.background=GROUP_HEX[student.group_id-1]||'#999';
-  document.getElementById('popup-name').textContent=student.name;
-  document.getElementById('popup-group-num').textContent=student.group_id;
-  document.getElementById('popup-points').textContent=marks[studentId]||0;
-  document.getElementById('student-popup').classList.remove('hidden');
-  document.getElementById('popup-overlay').classList.add('open');
-  window.popupStudentId=studentId;
-}
-
-function closePopup(){
-  document.getElementById('student-popup').classList.add('hidden');
-  document.getElementById('popup-overlay').classList.remove('open');
-  delete window.popupStudentId;
-}
-
-function openPointsModal(){
-  if(!window.popupStudentId)return;
-  openModal('add-points-modal');
-  document.getElementById('points-input').value='5';
-  document.getElementById('points-input').focus();
-}
-
-async function savePoints(){
-  const val=parseInt(document.getElementById('points-input').value)||0;
-  if(!window.popupStudentId)return;
-  marks[window.popupStudentId]=(marks[window.popupStudentId]||0)+val;
-  if(currentClass)await saveClassData();
-  closeModal('add-points-modal');
-  openPopup(window.popupStudentId);
-}
-
-// ══════════════════════════════
 // CLASS MANAGEMENT
 // ══════════════════════════════
-async function createClass(){
+async function createNewClass(){
   const name=document.getElementById('new-class-name').value.trim();
   if(!name){alert('Sila isi nama kelas');return;}
-  
-  const newClass={
-    user_id:currentUser.id,
-    name:name,
-    students:[],
-    grouping:null,
-    marks:{},
-    group_marks:{},
-    seating_layout:{}
-  };
-
+  const newClass={user_id:currentUser.id,name,students:[],grouping:null,marks:{},group_marks:{},seating_layout:{}};
   const{data,error}=await sb.from('classes').insert(newClass).select().single();
-  if(error){alert('Error: '+error.message);return;}
-  
-  currentClass=data;
-  students=[];
-  marks={};
-  grouping=null;
-  seatingLayout={};
-  
+  if(error){alert('Ralat: '+error.message);return;}
   closeModal('new-class-modal');
   document.getElementById('new-class-name').value='';
-  renderClassList();
-  switchScreen('setup-screen');
+  await refreshClassList();
+  selectClass(data.id);
 }
 
-async function loadClass(classId){
+async function refreshClassList(){
+  const{data,error}=await sb.from('classes').select('id,name').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  if(error)return;
+  allClasses=data||[];
+  renderClassListSidebar();
+}
+
+function renderClassListSidebar(){
+  const list=document.getElementById('class-list');
+  if(!allClasses.length){list.innerHTML='<div class="sidebar-empty">Tiada kelas lagi</div>';return;}
+  list.innerHTML='';
+  allClasses.forEach(c=>{
+    const btn=document.createElement('div');
+    btn.className='class-item'+(currentClass?.id===c.id?' active':'');
+    btn.textContent=c.name;
+    btn.onclick=()=>selectClass(c.id);
+    list.appendChild(btn);
+  });
+}
+
+async function selectClass(classId){
+  document.getElementById('loading-screen').style.display='flex';
+  document.getElementById('empty-scene').style.display='none';
   const{data,error}=await sb.from('classes').select('*').eq('id',classId).single();
-  if(error){alert('Error: '+error.message);return;}
-  
+  document.getElementById('loading-screen').style.display='none';
+  if(error||!data)return;
   currentClass=data;
   students=data.students||[];
   marks=data.marks||{};
   grouping=data.grouping||null;
-  groupMarks=data.group_marks||{};
-  seatingLayout=data.seating_layout||{};
-  
-  renderClassList();
-  updatePreview();
-  switchScreen('setup-screen');
+  renderClassListSidebar();
+  updateClassInfo();
+  renderScene();
 }
 
-async function loadClassList(){
-  if(!currentUser)return;
-  const{data,error}=await sb.from('classes').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
-  if(error)return;
-  if(!data.length){
-    document.getElementById('class-list').innerHTML='<div style="font-size:0.8rem;color:var(--muted);text-align:center;padding:10px">Tiada kelas. Buat baru!</div>';
-    return;
-  }
-  currentClass=data[0];
-  students=currentClass.students||[];
-  marks=currentClass.marks||{};
-  grouping=currentClass.grouping||null;
-  groupMarks=currentClass.group_marks||{};
-  seatingLayout=currentClass.seating_layout||{};
-  renderClassList();
-  updatePreview();
+function updateClassInfo(){
+  document.getElementById('class-info-box').style.display='block';
+  document.getElementById('class-title').textContent=currentClass?.name||'—';
+  document.getElementById('info-students').textContent=students.length;
+  document.getElementById('info-groups').textContent=grouping?.length||0;
 }
 
-function renderClassList(){
-  const list=document.getElementById('class-list');
-  if(!currentUser)return;
-  sb.from('classes').select('id,name').eq('user_id',currentUser.id).order('created_at',{ascending:false}).then(({data})=>{
-    list.innerHTML='';
-    if(!data.length){list.innerHTML='<div style="font-size:0.8rem;color:var(--muted)">Tiada kelas</div>';return;}
-    data.forEach(c=>{
-      const btn=document.createElement('button');
-      btn.className='class-item'+(currentClass?.id===c.id?' active':'');
-      btn.textContent=c.name;
-      btn.onclick=()=>loadClass(c.id);
-      list.appendChild(btn);
-    });
-  });
+async function saveClassData(){
+  if(!currentClass)return;
+  await sb.from('classes').update({
+    students,grouping,marks,group_marks:{},updated_at:new Date().toISOString()
+  }).eq('id',currentClass.id);
 }
 
 // ══════════════════════════════
-// STUDENTS
+// ROSTER MANAGEMENT
 // ══════════════════════════════
-function addStudent(){
-  const name=document.getElementById('manual-name').value.trim();
-  if(!name)return;
-  students.push({id:genId(),name:name,group_id:0});
-  document.getElementById('manual-name').value='';
-  renderStudentList();
-  updatePreview();
-}
-
-function addBulkStudents(){
-  const text=document.getElementById('bulk-input').value.trim();
-  if(!text)return;
-  const names=text.split(/[\n,]+/).map(n=>n.trim()).filter(n=>n);
-  names.forEach(name=>{
-    if(name&&!students.find(s=>s.name===name)){
-      students.push({id:genId(),name:name,group_id:0});
-    }
-  });
-  document.getElementById('bulk-input').value='';
-  renderStudentList();
-  updatePreview();
-}
-
-function deleteStudent(id){
-  students=students.filter(s=>s.id!==id);
-  delete marks[id];
-  renderStudentList();
-  updatePreview();
-}
-
-function renderStudentList(){
-  const list=document.getElementById('student-list');
+function renderRosterList(){
+  document.getElementById('roster-count').textContent=students.length;
+  const list=document.getElementById('roster-list');
   list.innerHTML='';
+  if(!students.length){list.innerHTML='<div style="font-size:0.8rem;color:var(--muted);text-align:center;padding:10px">Belum ada murid</div>';return;}
   students.forEach(s=>{
-    const div=document.createElement('div');div.className='student-item';
-    div.innerHTML=`<span>${s.name}</span><button onclick="deleteStudent('${s.id}')">✕</button>`;
+    const div=document.createElement('div');div.className='roster-item';
+    div.innerHTML=`<span>${s.name}</span><button onclick="removeStudent('${s.id}')">✕</button>`;
     list.appendChild(div);
   });
+}
+
+async function addStudentManual(){
+  const input=document.getElementById('manual-name-input');
+  const name=input.value.trim();
+  if(!name)return;
+  students.push({id:genId(),name,group_id:0});
+  input.value='';
+  renderRosterList();
+  updateClassInfo();
+  renderScene();
+  await saveClassData();
+}
+
+async function addStudentsBulk(){
+  const raw=document.getElementById('bulk-name-input').value.trim();
+  if(!raw)return;
+  const names=raw.split(/[\n,]+/).map(n=>n.trim()).filter(n=>n);
+  names.forEach(name=>{
+    if(!students.find(s=>s.name===name))students.push({id:genId(),name,group_id:0});
+  });
+  document.getElementById('bulk-name-input').value='';
+  renderRosterList();
+  updateClassInfo();
+  renderScene();
+  await saveClassData();
+}
+
+async function removeStudent(id){
+  students=students.filter(s=>s.id!==id);
+  delete marks[id];
+  if(grouping)grouping.forEach(g=>g.members=g.members.filter(m=>m!==id));
+  renderRosterList();
+  updateClassInfo();
+  renderScene();
+  await saveClassData();
 }
 
 // ══════════════════════════════
 // GROUPING
 // ══════════════════════════════
-async function autoGrouping(){
-  const numGroups=parseInt(document.getElementById('group-num').value);
-  if(students.length===0){alert('Tambah murid dulu');return;}
-  
+async function doAutoGrouping(){
+  if(!students.length){alert('Tambah murid dahulu');return;}
+  const numGroups=parseInt(document.getElementById('group-num-select').value);
   grouping=Array.from({length:numGroups}).map((_,i)=>({group_id:i+1,members:[]}));
   const shuffled=[...students].sort(()=>Math.random()-.5);
   shuffled.forEach((s,idx)=>{
-    const gid=(idx%numGroups);
+    const gid=idx%numGroups;
     grouping[gid].members.push(s.id);
-    s.group_id=gid+1;
+    const orig=students.find(st=>st.id===s.id);
+    if(orig)orig.group_id=gid+1;
   });
-  
+  closeModal('group-modal');
+  updateClassInfo();
+  renderScene();
   await saveClassData();
-  updatePreview();
-  switchScreen('seating-screen');
 }
 
 // ══════════════════════════════
-// SEATING VIEW
+// LEADERBOARD
 // ══════════════════════════════
-function renderSeatingView(){
-  const svg=document.getElementById('seating-svg');
+function showLeaderboard(){
+  if(!students.length){alert('Tiada murid lagi');return;}
+  const sorted=[...students].sort((a,b)=>(marks[b.id]||0)-(marks[a.id]||0));
+  const list=document.getElementById('leaderboard-list');
+  list.innerHTML='';
+  sorted.forEach((s,i)=>{
+    const row=document.createElement('div');row.className='lb-row';
+    const color=GROUP_HEX[(s.group_id-1+6)%6]||'#8899bb';
+    row.innerHTML=`<div class="lb-rank">${i+1}</div><div class="lb-dot" style="background:${color}"></div><div class="lb-name">${s.name}</div><div class="lb-pts">${marks[s.id]||0}</div>`;
+    list.appendChild(row);
+  });
+  openModal('leaderboard-modal');
+}
+
+// ══════════════════════════════
+// STUDENT POPUP
+// ══════════════════════════════
+function drawAvatarSVG(container,color){
+  container.innerHTML='';
+  const shadow=document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+  shadow.setAttribute('cx','50');shadow.setAttribute('cy','88');shadow.setAttribute('rx','26');shadow.setAttribute('ry','7');
+  shadow.setAttribute('fill','rgba(0,0,0,.35)');
+  container.appendChild(shadow);
+  const body=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  body.setAttribute('cx','50');body.setAttribute('cy','62');body.setAttribute('r','30');
+  body.setAttribute('fill',color);body.setAttribute('stroke','#fff');body.setAttribute('stroke-width','2.5');
+  container.appendChild(body);
+  const head=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  head.setAttribute('cx','50');head.setAttribute('cy','34');head.setAttribute('r','20');
+  head.setAttribute('fill','#f0d9b5');head.setAttribute('stroke','#fff');head.setAttribute('stroke-width','2.5');
+  container.appendChild(head);
+  // blank face dots
+  [-7,7].forEach(dx=>{
+    const eye=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    eye.setAttribute('cx',50+dx);eye.setAttribute('cy','34');eye.setAttribute('r','2.2');
+    eye.setAttribute('fill','#2a2a2a');
+    container.appendChild(eye);
+  });
+}
+
+function openStudentPopup(studentId){
+  const student=students.find(s=>s.id===studentId);
+  if(!student)return;
+  const color=GROUP_HEX[(student.group_id-1+6)%6]||'#8899bb';
+  drawAvatarSVG(document.getElementById('popup-avatar-svg'),color);
+  document.getElementById('popup-name').textContent=student.name;
+  document.getElementById('popup-group-tag').textContent=student.group_id?`Kumpulan ${student.group_id}`:'Belum berkumpulan';
+  document.getElementById('popup-points').textContent=marks[studentId]||0;
+  document.getElementById('student-popup').classList.remove('hidden');
+  document.getElementById('popup-overlay').classList.add('open');
+  window.selectedStudentId=studentId;
+}
+function closeStudentPopup(){
+  document.getElementById('student-popup').classList.add('hidden');
+  document.getElementById('popup-overlay').classList.remove('open');
+}
+function openAddPointsModal(){
+  document.getElementById('points-input').value='5';
+  openModal('points-modal');
+}
+async function savePoints(){
+  const val=parseInt(document.getElementById('points-input').value)||0;
+  if(!window.selectedStudentId)return;
+  marks[window.selectedStudentId]=(marks[window.selectedStudentId]||0)+val;
+  await saveClassData();
+  closeModal('points-modal');
+  openStudentPopup(window.selectedStudentId);
+}
+
+// ══════════════════════════════
+// 2D TOP-DOWN CLASSROOM SCENE
+// ══════════════════════════════
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs){
+  const e=document.createElementNS(NS,tag);
+  for(const k in attrs)e.setAttribute(k,attrs[k]);
+  return e;
+}
+
+function renderScene(){
+  const svg=document.getElementById('scene-svg');
   svg.innerHTML='';
-  
-  const rows=5,cols=6;
-  const padding=30,seatSize=70,spacing=100;
-  const width=cols*spacing+2*padding;
-  const height=rows*spacing+2*padding;
-  svg.setAttribute('viewBox',`0 0 ${width} ${height}`);
-  
-  // Classroom bg (decorative)
-  const bg=document.createElementNS('http://www.w3.org/2000/svg','rect');
-  bg.setAttribute('width',width);bg.setAttribute('height',height);
-  bg.setAttribute('fill','rgba(255,255,255,.01)');
-  svg.appendChild(bg);
-  
-  // Seats
+  document.getElementById('empty-scene').style.display='none';
+
+  const W=1200,H=800;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+
+  // ── FLOOR (tiled) ──
+  const defs=el('defs',{});
+  const pattern=el('pattern',{id:'floorTile',width:80,height:80,patternUnits:'userSpaceOnUse'});
+  pattern.appendChild(el('rect',{width:80,height:80,fill:'#c9a876'}));
+  pattern.appendChild(el('rect',{width:80,height:80,fill:'#bd9c68',opacity:0.5}));
+  pattern.appendChild(el('rect',{x:0,y:0,width:80,height:2,fill:'#a3855a'}));
+  pattern.appendChild(el('rect',{x:0,y:0,width:2,height:80,fill:'#a3855a'}));
+  defs.appendChild(pattern);
+  svg.appendChild(defs);
+
+  svg.appendChild(el('rect',{x:0,y:0,width:W,height:H,fill:'url(#floorTile)'}));
+
+  // ── WALLS ──
+  const wallColor='#3a5578',wallDark='#2e4362';
+  svg.appendChild(el('rect',{x:0,y:0,width:W,height:70,fill:wallColor})); // top wall
+  svg.appendChild(el('rect',{x:0,y:0,width:40,height:H,fill:wallColor})); // left wall
+  svg.appendChild(el('rect',{x:W-40,y:0,width:40,height:H,fill:wallColor})); // right wall
+  svg.appendChild(el('rect',{x:0,y:66,width:W,height:6,fill:wallDark}));
+
+  // Windows on left/right walls
+  for(let wy=140;wy<H-80;wy+=180){
+    const winL=el('rect',{x:8,y:wy,width:26,height:70,rx:4,fill:'#8fd6e8',stroke:'#2e4362','stroke-width':3});
+    svg.appendChild(winL);
+    const winR=el('rect',{x:W-34,y:wy,width:26,height:70,rx:4,fill:'#8fd6e8',stroke:'#2e4362','stroke-width':3});
+    svg.appendChild(winR);
+  }
+
+  // Door (bottom wall gap) - bottom center
+  svg.appendChild(el('rect',{x:W/2-45,y:H-14,width:90,height:14,fill:'#5a3d2a'}));
+
+  // ── WHITEBOARD ──
+  const wbX=W/2-160,wbY=8;
+  svg.appendChild(el('rect',{x:wbX,y:wbY,width:320,height:55,rx:6,fill:'#e8f4ea',stroke:'#3a5578','stroke-width':4}));
+  const wbLabel=el('text',{x:W/2,y:wbY+34,'text-anchor':'middle','font-family':'Nunito','font-weight':800,'font-size':16,fill:'#3a5578'});
+  wbLabel.textContent='📋 Papan Tulis';
+  svg.appendChild(wbLabel);
+
+  // ── TEACHER DESK (top-left area, near board) ──
+  const tdX=90,tdY=90;
+  svg.appendChild(el('rect',{x:tdX,y:tdY,width:110,height:60,rx:8,fill:'#8b6f47',stroke:'#5a3d2a','stroke-width':3}));
+  svg.appendChild(el('rect',{x:tdX+14,y:tdY+12,width:38,height:26,rx:3,fill:'#4fd1c5',opacity:.8}));
+  const tdLabel=el('text',{x:tdX+55,y:tdY+78,'text-anchor':'middle','font-family':'Nunito','font-weight':800,'font-size':12,fill:'#eef2ff'});
+  tdLabel.textContent='🏫 Guru';
+  svg.appendChild(tdLabel);
+
+  // ── BOOKSHELF (top-right area) ──
+  const bsX=W-200,bsY=90;
+  svg.appendChild(el('rect',{x:bsX,y:bsY,width:110,height:60,rx:6,fill:'#5a3d2a',stroke:'#3d2a1c','stroke-width':3}));
+  for(let i=0;i<6;i++){
+    svg.appendChild(el('rect',{x:bsX+8+i*16,y:bsY+8,width:10,height:44,fill:GROUP_HEX[i%6]}));
+  }
+  const bsLabel=el('text',{x:bsX+55,y:bsY+78,'text-anchor':'middle','font-family':'Nunito','font-weight':800,'font-size':12,fill:'#eef2ff'});
+  bsLabel.textContent='📚 Rak Buku';
+  svg.appendChild(bsLabel);
+
+  // Decorative plants at corners
+  function plant(cx,cy){
+    svg.appendChild(el('ellipse',{cx,cy:cy+10,rx:16,ry:6,fill:'rgba(0,0,0,.25)'}));
+    svg.appendChild(el('rect',{x:cx-10,y:cy-4,width:20,height:16,fill:'#8b6f47',rx:3}));
+    svg.appendChild(el('circle',{cx,cy:cy-14,r:16,fill:'#4a8c4a'}));
+    svg.appendChild(el('circle',{cx:cx-10,cy:cy-8,r:11,fill:'#5a9c5a'}));
+    svg.appendChild(el('circle',{cx:cx+10,cy:cy-8,r:11,fill:'#5a9c5a'}));
+  }
+  plant(70,H-60);
+  plant(W-70,H-60);
+
+  // ── STUDENT DESKS + CHARACTERS ──
+  if(!students.length){
+    document.getElementById('empty-scene').style.display='flex';
+    return;
+  }
+
+  const cols=6;
+  const startX=180,startY=230;
+  const spacingX=155,spacingY=140;
+
   students.forEach((s,idx)=>{
     const row=Math.floor(idx/cols);
     const col=idx%cols;
-    const x=padding+col*spacing;
-    const y=padding+row*spacing;
-    
-    const stored=seatingLayout[s.id];
-    const sx=stored?stored.x:x;
-    const sy=stored?stored.y:y;
-    
-    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
-    g.setAttribute('class','seat-group');
-    g.setAttribute('data-student-id',s.id);
-    g.style.cursor='pointer';
-    
-    const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
-    rect.setAttribute('class','seat-rect');
-    rect.setAttribute('x',sx-seatSize/2);rect.setAttribute('y',sy-seatSize/2);
-    rect.setAttribute('width',seatSize);rect.setAttribute('height',seatSize);
-    rect.setAttribute('rx',8);
-    rect.style.fill=GROUP_HEX[s.group_id-1]||'#999';
-    
-    const text=document.createElementNS('http://www.w3.org/2000/svg','text');
-    text.setAttribute('class','seat-text');
-    text.setAttribute('x',sx);text.setAttribute('y',sy+5);
-    text.textContent=s.name.substring(0,8);
-    
-    g.appendChild(rect);g.appendChild(text);
-    g.addEventListener('click',()=>openPopup(s.id));
+    const x=startX+col*spacingX;
+    const y=startY+row*spacingY;
+    if(x>W-140||y>H-100)return; // safety bound
+
+    const color=GROUP_HEX[(s.group_id-1+6)%6]||'#8899bb';
+
+    // Desk (top-down)
+    const g=el('g',{});
+    g.appendChild(el('rect',{x:x-40,y:y-8,width:80,height:36,rx:6,fill:'#a3855a',stroke:'#7a6339','stroke-width':2.5}));
+    g.appendChild(el('rect',{x:x-32,y:y-2,width:64,height:8,rx:2,fill:'#c9a876'}));
     svg.appendChild(g);
-  });
-  
-  // Make draggable (simplified)
-  makeSeatsDraggable(svg,padding,spacing,seatSize);
-}
 
-function makeSeatsDraggable(svg,padding,spacing,seatSize){
-  let dragging=null;
-  svg.addEventListener('mousedown',e=>{
-    const g=e.target.closest('.seat-group');
-    if(!g)return;
-    dragging=g;
-    g.querySelector('.seat-rect').classList.add('dragging');
-  });
-  svg.addEventListener('mousemove',e=>{
-    if(!dragging)return;
-    const rect=svg.getBoundingClientRect();
-    const x=(e.clientX-rect.left)/rect.width*svg.viewBox.baseVal.width;
-    const y=(e.clientY-rect.top)/rect.height*svg.viewBox.baseVal.height;
-    const studentId=dragging.getAttribute('data-student-id');
-    seatingLayout[studentId]={x,y};
-    
-    dragging.querySelector('.seat-rect').setAttribute('x',x-seatSize/2);
-    dragging.querySelector('.seat-rect').setAttribute('y',y-seatSize/2);
-    dragging.querySelector('.seat-text').setAttribute('x',x);
-    dragging.querySelector('.seat-text').setAttribute('y',y+5);
-  });
-  svg.addEventListener('mouseup',async()=>{
-    if(dragging)dragging.querySelector('.seat-rect').classList.remove('dragging');
-    dragging=null;
-    if(currentClass)await saveClassData();
-  });
-}
+    // Character group (clickable)
+    const charG=el('g',{style:'cursor:pointer'});
+    charG.addEventListener('click',()=>openStudentPopup(s.id));
 
-// ══════════════════════════════
-// GROUP VIEW
-// ══════════════════════════════
-function renderGroupView(){
-  const svg=document.getElementById('group-svg');
-  svg.innerHTML='';
-  
-  if(!grouping||grouping.length===0){
-    svg.innerHTML='<text x="50%" y="50%" text-anchor="middle" fill="var(--muted)" font-size="16">Buat random kumpulan dulu</text>';
-    return;
-  }
-  
-  svg.setAttribute('viewBox','0 0 1000 600');
-  const circleRadius=120;
-  const groupCount=grouping.length;
-  const centerX=500,centerY=300;
-  const angleStep=360/groupCount;
-  
-  grouping.forEach((group,idx)=>{
-    const angle=(idx*angleStep)*Math.PI/180;
-    const gx=centerX+200*Math.cos(angle);
-    const gy=centerY+200*Math.sin(angle);
-    
-    // Group circle (bg)
-    const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
-    circle.setAttribute('cx',gx);circle.setAttribute('cy',gy);circle.setAttribute('r',circleRadius);
-    circle.setAttribute('class','group-circle');
-    circle.setAttribute('fill',GROUP_HEX[idx]);
-    svg.appendChild(circle);
-    
-    // Students in circle
-    const memberCount=group.members.length;
-    group.members.forEach((studentId,mid)=>{
-      const memberAngle=(mid*360/memberCount)*Math.PI/180;
-      const sx=gx+80*Math.cos(memberAngle);
-      const sy=gy+80*Math.sin(memberAngle);
-      
-      const student=students.find(s=>s.id===studentId);
-      if(!student)return;
-      
-      const g=document.createElementNS('http://www.w3.org/2000/svg','g');
-      g.setAttribute('class','group-student-bubble');
-      g.setAttribute('data-student-id',studentId);
-      g.style.cursor='pointer';
-      g.addEventListener('click',()=>openPopup(studentId));
-      
-      const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
-      c.setAttribute('class','student-bubble-circle');
-      c.setAttribute('cx',sx);c.setAttribute('cy',sy);c.setAttribute('r',16);
-      c.setAttribute('fill',GROUP_HEX[idx]);c.setAttribute('stroke','#fff');c.setAttribute('stroke-width',2);
-      
-      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
-      t.setAttribute('x',sx);t.setAttribute('y',sy+4);t.setAttribute('text-anchor','middle');
-      t.setAttribute('font-size',12);t.setAttribute('font-weight',700);t.setAttribute('fill','#fff');
-      t.textContent=student.name.substring(0,1);
-      
-      g.appendChild(c);g.appendChild(t);
-      svg.appendChild(g);
-    });
+    const cx=x,cy=y+48;
+    charG.appendChild(el('ellipse',{cx,cy:cy+22,rx:20,ry:6,fill:'rgba(0,0,0,.3)'}));
+    charG.appendChild(el('circle',{cx,cy:cy+6,r:22,fill:color,stroke:'#fff','stroke-width':2}));
+    charG.appendChild(el('circle',{cx,cy:cy-14,r:15,fill:'#f0d9b5',stroke:'#fff','stroke-width':2}));
+    charG.appendChild(el('circle',{cx:cx-5,cy:cy-14,r:1.8,fill:'#2a2a2a'}));
+    charG.appendChild(el('circle',{cx:cx+5,cy:cy-14,r:1.8,fill:'#2a2a2a'}));
+
+    const label=el('text',{x:cx,y:cy+38,class:'char-label'});
+    label.textContent=s.name.length>10?s.name.substring(0,9)+'…':s.name;
+    charG.appendChild(label);
+
+    svg.appendChild(charG);
   });
-}
-
-// ══════════════════════════════
-// SAVE & PREVIEW
-// ══════════════════════════════
-async function saveClassData(){
-  if(!currentClass)return;
-  await sb.from('classes').update({
-    students:students,
-    grouping:grouping,
-    marks:marks,
-    group_marks:groupMarks,
-    seating_layout:seatingLayout,
-    updated_at:new Date().toISOString()
-  }).eq('id',currentClass.id);
-}
-
-function updatePreview(){
-  document.getElementById('student-count').textContent=students.length;
-  const gn=grouping?grouping.length:'—';
-  document.getElementById('group-count').textContent=gn;
 }
 
 // ══════════════════════════════
 // INIT
 // ══════════════════════════════
-loadSession();
-renderAuthBar();
-loadClassList();
+async function init(){
+  loadSession();
+  renderAuthBar();
+  document.getElementById('loading-screen').style.display='flex';
+  await refreshClassList();
+  document.getElementById('loading-screen').style.display='none';
+  if(allClasses.length){
+    await selectClass(allClasses[0].id);
+  }else{
+    document.getElementById('empty-scene').style.display='flex';
+  }
+}
+init();
 </script>
 </body>
 </html>
