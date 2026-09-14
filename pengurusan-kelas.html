@@ -40,9 +40,18 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:10px 1
 .sidebar-empty{font-size:0.78rem;color:var(--muted);text-align:center;padding:14px 8px}
 
 /* TOOLBAR (floats over scene) */
-.scene-toolbar{position:absolute;top:14px;left:14px;display:flex;gap:8px;z-index:60;flex-wrap:wrap}
+.scene-toolbar{position:absolute;top:14px;left:14px;display:flex;gap:8px;z-index:60;flex-wrap:wrap;align-items:center}
 .tool-btn{display:flex;align-items:center;gap:6px;background:rgba(25,40,71,.92);border:1.5px solid #2e4880;color:var(--text);padding:8px 14px;border-radius:12px;font-size:0.82rem;font-weight:700;cursor:pointer;transition:all .15s;backdrop-filter:blur(6px)}
 .tool-btn:hover{border-color:var(--accent2);transform:translateY(-2px)}
+.view-toggle{display:flex;gap:4px;background:rgba(15,27,53,.6);padding:4px;border-radius:14px;backdrop-filter:blur(6px)}
+.view-toggle .tool-btn{background:transparent;border-color:transparent}
+.view-toggle .tool-btn.active{background:var(--accent2);color:#0f1b35;border-color:var(--accent2)}
+.view-toggle .tool-btn.active:hover{transform:none}
+
+/* Draggable seat units */
+.seat-unit{touch-action:none}
+.seat-unit.dragging-seat{opacity:.85}
+.char-anim{transform-box:fill-box}
 
 .class-info{position:absolute;top:14px;right:14px;background:rgba(25,40,71,.92);border:1.5px solid #2e4880;border-radius:12px;padding:10px 16px;z-index:60;font-size:0.8rem;backdrop-filter:blur(6px)}
 .class-info-title{font-family:var(--fd);font-weight:800;color:var(--accent);font-size:0.95rem;margin-bottom:4px}
@@ -142,8 +151,12 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:10px 1
     <!-- SCENE -->
     <div class="scene-wrap" id="scene-wrap">
       <div class="scene-toolbar">
+        <div class="view-toggle">
+          <button class="tool-btn view-btn active" data-mode="seating" onclick="setSceneMode('seating')">🪑 Susun Atur</button>
+          <button class="tool-btn view-btn" data-mode="group" onclick="setSceneMode('group')">⭕ Kumpulan</button>
+        </div>
         <button class="tool-btn" onclick="openModal('roster-modal')">👥 Uruskan Murid</button>
-        <button class="tool-btn" onclick="openModal('group-modal')">🎲 Kumpulan</button>
+        <button class="tool-btn" onclick="openModal('group-modal')">🎲 Bahagi Kumpulan</button>
         <button class="tool-btn" onclick="showLeaderboard()">🏆 Papan Markah</button>
       </div>
       <div class="class-info" id="class-info-box" style="display:none">
@@ -282,7 +295,10 @@ const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
 const SESSION_KEY='eduplay_session';
 let currentUser=null,currentClass=null;
 let students=[],marks={},grouping=null;
+let seatingLayout={};
+let sceneMode='seating';
 let allClasses=[];
+let dragState=null;
 
 const GROUP_HEX=['#fc5c7d','#6a82fb','#43e97b','#f7971e','#a18cd1','#4facfe'];
 
@@ -363,6 +379,7 @@ async function selectClass(classId){
   students=data.students||[];
   marks=data.marks||{};
   grouping=data.grouping||null;
+  seatingLayout=data.seating_layout||{};
   renderClassListSidebar();
   updateClassInfo();
   renderScene();
@@ -378,8 +395,14 @@ function updateClassInfo(){
 async function saveClassData(){
   if(!currentClass)return;
   await sb.from('classes').update({
-    students,grouping,marks,group_marks:{},updated_at:new Date().toISOString()
+    students,grouping,marks,group_marks:{},seating_layout:seatingLayout,updated_at:new Date().toISOString()
   }).eq('id',currentClass.id);
+}
+
+function setSceneMode(mode){
+  sceneMode=mode;
+  document.querySelectorAll('.view-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  renderScene();
 }
 
 // ══════════════════════════════
@@ -426,6 +449,7 @@ async function addStudentsBulk(){
 async function removeStudent(id){
   students=students.filter(s=>s.id!==id);
   delete marks[id];
+  delete seatingLayout[id];
   if(grouping)grouping.forEach(g=>g.members=g.members.filter(m=>m!==id));
   renderRosterList();
   updateClassInfo();
@@ -535,15 +559,13 @@ function el(tag,attrs){
   return e;
 }
 
-function renderScene(){
-  const svg=document.getElementById('scene-svg');
-  svg.innerHTML='';
-  document.getElementById('empty-scene').style.display='none';
+function getSVGPoint(svg,evt){
+  const pt=svg.createSVGPoint();
+  pt.x=evt.clientX;pt.y=evt.clientY;
+  return pt.matrixTransform(svg.getScreenCTM().inverse());
+}
 
-  const W=1200,H=800;
-  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
-
-  // ── FLOOR (tiled) ──
+function drawFloor(svg,W,H){
   const defs=el('defs',{});
   const pattern=el('pattern',{id:'floorTile',width:80,height:80,patternUnits:'userSpaceOnUse'});
   pattern.appendChild(el('rect',{width:80,height:80,fill:'#c9a876'}));
@@ -552,35 +574,29 @@ function renderScene(){
   pattern.appendChild(el('rect',{x:0,y:0,width:2,height:80,fill:'#a3855a'}));
   defs.appendChild(pattern);
   svg.appendChild(defs);
-
   svg.appendChild(el('rect',{x:0,y:0,width:W,height:H,fill:'url(#floorTile)'}));
+}
 
-  // ── WALLS ──
+function drawClassroomDecor(svg,W,H){
   const wallColor='#3a5578',wallDark='#2e4362';
-  svg.appendChild(el('rect',{x:0,y:0,width:W,height:70,fill:wallColor})); // top wall
-  svg.appendChild(el('rect',{x:0,y:0,width:40,height:H,fill:wallColor})); // left wall
-  svg.appendChild(el('rect',{x:W-40,y:0,width:40,height:H,fill:wallColor})); // right wall
+  svg.appendChild(el('rect',{x:0,y:0,width:W,height:70,fill:wallColor}));
+  svg.appendChild(el('rect',{x:0,y:0,width:40,height:H,fill:wallColor}));
+  svg.appendChild(el('rect',{x:W-40,y:0,width:40,height:H,fill:wallColor}));
   svg.appendChild(el('rect',{x:0,y:66,width:W,height:6,fill:wallDark}));
 
-  // Windows on left/right walls
   for(let wy=140;wy<H-80;wy+=180){
-    const winL=el('rect',{x:8,y:wy,width:26,height:70,rx:4,fill:'#8fd6e8',stroke:'#2e4362','stroke-width':3});
-    svg.appendChild(winL);
-    const winR=el('rect',{x:W-34,y:wy,width:26,height:70,rx:4,fill:'#8fd6e8',stroke:'#2e4362','stroke-width':3});
-    svg.appendChild(winR);
+    svg.appendChild(el('rect',{x:8,y:wy,width:26,height:70,rx:4,fill:'#8fd6e8',stroke:'#2e4362','stroke-width':3}));
+    svg.appendChild(el('rect',{x:W-34,y:wy,width:26,height:70,rx:4,fill:'#8fd6e8',stroke:'#2e4362','stroke-width':3}));
   }
 
-  // Door (bottom wall gap) - bottom center
   svg.appendChild(el('rect',{x:W/2-45,y:H-14,width:90,height:14,fill:'#5a3d2a'}));
 
-  // ── WHITEBOARD ──
   const wbX=W/2-160,wbY=8;
   svg.appendChild(el('rect',{x:wbX,y:wbY,width:320,height:55,rx:6,fill:'#e8f4ea',stroke:'#3a5578','stroke-width':4}));
   const wbLabel=el('text',{x:W/2,y:wbY+34,'text-anchor':'middle','font-family':'Nunito','font-weight':800,'font-size':16,fill:'#3a5578'});
   wbLabel.textContent='📋 Papan Tulis';
   svg.appendChild(wbLabel);
 
-  // ── TEACHER DESK (top-left area, near board) ──
   const tdX=90,tdY=90;
   svg.appendChild(el('rect',{x:tdX,y:tdY,width:110,height:60,rx:8,fill:'#8b6f47',stroke:'#5a3d2a','stroke-width':3}));
   svg.appendChild(el('rect',{x:tdX+14,y:tdY+12,width:38,height:26,rx:3,fill:'#4fd1c5',opacity:.8}));
@@ -588,7 +604,6 @@ function renderScene(){
   tdLabel.textContent='🏫 Guru';
   svg.appendChild(tdLabel);
 
-  // ── BOOKSHELF (top-right area) ──
   const bsX=W-200,bsY=90;
   svg.appendChild(el('rect',{x:bsX,y:bsY,width:110,height:60,rx:6,fill:'#5a3d2a',stroke:'#3d2a1c','stroke-width':3}));
   for(let i=0;i<6;i++){
@@ -598,7 +613,6 @@ function renderScene(){
   bsLabel.textContent='📚 Rak Buku';
   svg.appendChild(bsLabel);
 
-  // Decorative plants at corners
   function plant(cx,cy){
     svg.appendChild(el('ellipse',{cx,cy:cy+10,rx:16,ry:6,fill:'rgba(0,0,0,.25)'}));
     svg.appendChild(el('rect',{x:cx-10,y:cy-4,width:20,height:16,fill:'#8b6f47',rx:3}));
@@ -608,49 +622,166 @@ function renderScene(){
   }
   plant(70,H-60);
   plant(W-70,H-60);
+}
 
-  // ── STUDENT DESKS + CHARACTERS ──
-  if(!students.length){
-    document.getElementById('empty-scene').style.display='flex';
-    return;
-  }
+function drawCenterMessage(svg,W,H,msg){
+  const t=el('text',{x:W/2,y:H/2,'text-anchor':'middle','font-family':'Nunito','font-weight':700,'font-size':18,fill:'#8899bb'});
+  t.textContent=msg;
+  svg.appendChild(t);
+}
 
-  const cols=6;
-  const startX=180,startY=230;
-  const spacingX=155,spacingY=140;
+// Blank/idle-animated character, drawn around local origin (0,0)
+function buildCharacterGroup(s,color){
+  const charG=el('g',{class:'char-anim'});
+  charG.appendChild(el('ellipse',{cx:0,cy:22,rx:20,ry:6,fill:'rgba(0,0,0,.3)'}));
+  const body=el('circle',{cx:0,cy:6,r:22,fill:color,stroke:'#fff','stroke-width':2});
+  charG.appendChild(body);
+  charG.appendChild(el('circle',{cx:0,cy:-14,r:15,fill:'#f0d9b5',stroke:'#fff','stroke-width':2}));
+  charG.appendChild(el('circle',{cx:-5,cy:-14,r:1.8,fill:'#2a2a2a'}));
+  charG.appendChild(el('circle',{cx:5,cy:-14,r:1.8,fill:'#2a2a2a'}));
+  const label=el('text',{x:0,y:38,class:'char-label'});
+  label.textContent=s.name.length>10?s.name.substring(0,9)+'…':s.name;
+  charG.appendChild(label);
 
+  // idle bob animation, randomized per-student so the room feels alive
+  const dur=(1.6+Math.random()*0.9).toFixed(2)+'s';
+  const delay=(Math.random()*1.6).toFixed(2)+'s';
+  const anim=el('animateTransform',{attributeName:'transform',type:'translate',
+    values:'0 0; 0 -4; 0 0',keyTimes:'0;0.5;1',dur,begin:delay,repeatCount:'indefinite'});
+  charG.appendChild(anim);
+  return charG;
+}
+
+// ── SEATING VIEW (draggable desks) ──
+function renderSeatingUnits(svg,W,H){
+  const cols=6,startX=180,startY=230,spacingX=155,spacingY=140;
   students.forEach((s,idx)=>{
-    const row=Math.floor(idx/cols);
-    const col=idx%cols;
-    const x=startX+col*spacingX;
-    const y=startY+row*spacingY;
-    if(x>W-140||y>H-100)return; // safety bound
-
-    const color=GROUP_HEX[(s.group_id-1+6)%6]||'#8899bb';
-
-    // Desk (top-down)
-    const g=el('g',{});
-    g.appendChild(el('rect',{x:x-40,y:y-8,width:80,height:36,rx:6,fill:'#a3855a',stroke:'#7a6339','stroke-width':2.5}));
-    g.appendChild(el('rect',{x:x-32,y:y-2,width:64,height:8,rx:2,fill:'#c9a876'}));
-    svg.appendChild(g);
-
-    // Character group (clickable)
-    const charG=el('g',{style:'cursor:pointer'});
-    charG.addEventListener('click',()=>openStudentPopup(s.id));
-
-    const cx=x,cy=y+48;
-    charG.appendChild(el('ellipse',{cx,cy:cy+22,rx:20,ry:6,fill:'rgba(0,0,0,.3)'}));
-    charG.appendChild(el('circle',{cx,cy:cy+6,r:22,fill:color,stroke:'#fff','stroke-width':2}));
-    charG.appendChild(el('circle',{cx,cy:cy-14,r:15,fill:'#f0d9b5',stroke:'#fff','stroke-width':2}));
-    charG.appendChild(el('circle',{cx:cx-5,cy:cy-14,r:1.8,fill:'#2a2a2a'}));
-    charG.appendChild(el('circle',{cx:cx+5,cy:cy-14,r:1.8,fill:'#2a2a2a'}));
-
-    const label=el('text',{x:cx,y:cy+38,class:'char-label'});
-    label.textContent=s.name.length>10?s.name.substring(0,9)+'…':s.name;
-    charG.appendChild(label);
-
-    svg.appendChild(charG);
+    const row=Math.floor(idx/cols),col=idx%cols;
+    const defaultX=Math.min(startX+col*spacingX,W-100);
+    const defaultY=Math.min(startY+row*spacingY,H-100);
+    const pos=seatingLayout[s.id]||{x:defaultX,y:defaultY};
+    svg.appendChild(buildSeatUnit(s,pos.x,pos.y));
   });
+}
+
+function buildSeatUnit(s,x,y){
+  const color=GROUP_HEX[(s.group_id-1+6)%6]||'#8899bb';
+  const g=el('g',{class:'seat-unit','data-student-id':s.id,transform:`translate(${x},${y})`});
+  g.style.cursor='grab';
+
+  g.appendChild(el('rect',{x:-40,y:-8,width:80,height:36,rx:6,fill:'#a3855a',stroke:'#7a6339','stroke-width':2.5}));
+  g.appendChild(el('rect',{x:-32,y:-2,width:64,height:8,rx:2,fill:'#c9a876'}));
+
+  const charWrap=el('g',{transform:'translate(0,48)'});
+  charWrap.appendChild(buildCharacterGroup(s,color));
+  g.appendChild(charWrap);
+
+  attachDragHandlers(g,s.id);
+  return g;
+}
+
+function attachDragHandlers(g,studentId){
+  g.addEventListener('pointerdown',e=>startDrag(e,g,studentId));
+  g.addEventListener('pointermove',e=>{if(dragState&&dragState.g===g)onSeatPointerMove(e);});
+  g.addEventListener('pointerup',e=>{if(dragState&&dragState.g===g)onSeatPointerUp(e);});
+  g.addEventListener('pointercancel',()=>{if(dragState&&dragState.g===g){g.classList.remove('dragging-seat');dragState=null;}});
+}
+
+function startDrag(evt,g,studentId){
+  if(sceneMode!=='seating')return;
+  evt.preventDefault();
+  const svg=document.getElementById('scene-svg');
+  const pt=getSVGPoint(svg,evt);
+  const matrix=g.transform.baseVal.consolidate().matrix;
+  dragState={g,studentId,offsetX:pt.x-matrix.e,offsetY:pt.y-matrix.f,
+    moved:false,startClientX:evt.clientX,startClientY:evt.clientY,pendingX:matrix.e,pendingY:matrix.f};
+  g.setPointerCapture(evt.pointerId);
+  g.classList.add('dragging-seat');
+}
+
+function onSeatPointerMove(evt){
+  const svg=document.getElementById('scene-svg');
+  const pt=getSVGPoint(svg,evt);
+  const grid=20;
+  let nx=Math.round((pt.x-dragState.offsetX)/grid)*grid;
+  let ny=Math.round((pt.y-dragState.offsetY)/grid)*grid;
+  nx=Math.max(90,Math.min(1110,nx));
+  ny=Math.max(140,Math.min(760,ny));
+  dragState.g.setAttribute('transform',`translate(${nx},${ny})`);
+  dragState.pendingX=nx;dragState.pendingY=ny;
+  const dx=evt.clientX-dragState.startClientX,dy=evt.clientY-dragState.startClientY;
+  if(Math.hypot(dx,dy)>6)dragState.moved=true;
+}
+
+async function onSeatPointerUp(evt){
+  const{g,studentId,pendingX,pendingY,moved}=dragState;
+  g.classList.remove('dragging-seat');
+  try{g.releasePointerCapture(evt.pointerId)}catch{}
+  if(moved){
+    seatingLayout[studentId]={x:pendingX,y:pendingY};
+    await saveClassData();
+  }else{
+    openStudentPopup(studentId);
+  }
+  dragState=null;
+}
+
+// ── GROUP VIEW (circular clusters) ──
+function renderGroupClusters(svg,W,H){
+  const centerX=W/2,centerY=H/2+30;
+  const groupCount=grouping.length;
+  const orbitR=Math.min(260,80+groupCount*35);
+
+  grouping.forEach((group,gi)=>{
+    const angle=(gi/groupCount)*2*Math.PI-Math.PI/2;
+    const gx=centerX+orbitR*Math.cos(angle);
+    const gy=centerY+orbitR*0.72*Math.sin(angle);
+    const color=GROUP_HEX[gi%6];
+    const memberCount=group.members.length||1;
+    const clusterR=55+Math.min(memberCount,10)*7;
+
+    svg.appendChild(el('circle',{cx:gx,cy:gy,r:clusterR,fill:color,opacity:.14,stroke:color,'stroke-width':3,'stroke-dasharray':'7 5'}));
+    const glabel=el('text',{x:gx,y:gy-clusterR-14,'text-anchor':'middle','font-family':'Baloo 2','font-weight':800,'font-size':16,fill:color});
+    glabel.textContent=`Kumpulan ${group.group_id}`;
+    svg.appendChild(glabel);
+
+    group.members.forEach((sid,mi)=>{
+      const student=students.find(s=>s.id===sid);
+      if(!student)return;
+      const mAngle=(mi/memberCount)*2*Math.PI;
+      const mr=memberCount>1?clusterR*0.55:0;
+      const sx=gx+mr*Math.cos(mAngle);
+      const sy=gy+mr*Math.sin(mAngle);
+      const charHolder=el('g',{transform:`translate(${sx},${sy})`,style:'cursor:pointer'});
+      charHolder.appendChild(buildCharacterGroup(student,color));
+      charHolder.addEventListener('click',()=>openStudentPopup(student.id));
+      svg.appendChild(charHolder);
+    });
+  });
+}
+
+// ── MAIN DISPATCH ──
+function renderScene(){
+  const svg=document.getElementById('scene-svg');
+  svg.innerHTML='';
+  const emptyDiv=document.getElementById('empty-scene');
+  const W=1200,H=800;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+
+  if(!currentClass){emptyDiv.style.display='flex';return;}
+  emptyDiv.style.display='none';
+
+  drawFloor(svg,W,H);
+
+  if(sceneMode==='seating'){
+    drawClassroomDecor(svg,W,H);
+    if(!students.length){drawCenterMessage(svg,W,H,'👥 Tambah murid untuk mula susun kelas');return;}
+    renderSeatingUnits(svg,W,H);
+  }else{
+    if(!students.length){drawCenterMessage(svg,W,H,'👥 Tambah murid dahulu');return;}
+    if(!grouping||!grouping.length){drawCenterMessage(svg,W,H,'🎲 Klik "Bahagi Kumpulan" untuk mula');return;}
+    renderGroupClusters(svg,W,H);
+  }
 }
 
 // ══════════════════════════════
