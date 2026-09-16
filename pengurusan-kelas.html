@@ -29,10 +29,26 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:10px 1
 /* LAYOUT */
 .body-layout{flex:1;display:flex;min-height:0}
 
-/* SIDEBAR */
-.sidebar{width:230px;background:var(--surface);border-right:1px solid #2a3f6e;padding:14px;overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column}
-.sidebar h2{font-size:0.72rem;color:var(--accent2);font-weight:700;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
-.class-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+/* SIDEBAR / SCOREBOARD */
+.sidebar{width:230px;background:var(--surface);border-right:1px solid #2a3f6e;padding:14px;flex-shrink:0;display:flex;flex-direction:column;height:100%;min-height:0}
+.sidebar h2{font-size:0.72rem;color:var(--accent2);font-weight:700;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px;flex-shrink:0}
+.scoreboard-list{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-right:2px}
+.score-card{display:flex;align-items:center;gap:10px;background:var(--surface2);border-radius:14px;padding:8px 10px;cursor:pointer;transition:transform .15s,background .15s;flex-shrink:0}
+.score-card:hover{transform:translateX(3px);background:#22375f}
+.score-rank-num{font-family:var(--fd);font-weight:900;color:var(--muted);font-size:0.72rem;width:14px;text-align:center;flex-shrink:0}
+.score-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.7rem;color:#fff;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.3);border:2px solid rgba(255,255,255,.25)}
+.score-name{flex:1;font-size:0.82rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.score-name-wrap{flex:1;min-width:0;overflow:hidden}
+.score-name-wrap .score-name{font-size:0.82rem}
+.score-sub{font-size:0.68rem;color:var(--muted);font-weight:600}
+.score-pts{font-weight:900;color:var(--accent);font-size:0.85rem;flex-shrink:0}
+.sidebar-btn{width:100%;padding:9px;background:var(--accent);color:#1a1200;border:none;border-radius:9px;font-weight:800;font-size:0.8rem;cursor:pointer;margin-bottom:6px;transition:transform .15s;flex-shrink:0}
+.sidebar-btn:hover{transform:translateY(-1px)}
+.sidebar-empty{font-size:0.78rem;color:var(--muted);text-align:center;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.sidebar-empty-icon{font-size:1.6rem;opacity:.5}
+
+/* Class list (used inside Switch Class modal now) */
+.class-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;max-height:280px;overflow-y:auto}
 .class-item{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 11px;background:var(--surface2);border:1.5px solid transparent;border-radius:9px;cursor:pointer;font-size:0.83rem;font-weight:700;transition:all .15s}
 .class-item:hover{border-color:var(--accent2)}
 .class-item.active{background:var(--accent);color:#1a1200;border-color:var(--accent)}
@@ -41,10 +57,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:10px 1
 .class-item-del{flex-shrink:0;width:20px;height:20px;border-radius:6px;border:none;background:transparent;color:inherit;opacity:0;font-size:0.75rem;cursor:pointer;transition:opacity .15s,background .15s;display:flex;align-items:center;justify-content:center}
 .class-item:hover .class-item-del{opacity:.55}
 .class-item-del:hover{opacity:1 !important;background:rgba(252,92,125,.25);color:var(--wrong)}
-.sidebar-btn{width:100%;padding:9px;background:var(--accent);color:#1a1200;border:none;border-radius:9px;font-weight:800;font-size:0.8rem;cursor:pointer;margin-bottom:6px;transition:transform .15s}
-.sidebar-btn:hover{transform:translateY(-1px)}
-.sidebar-empty{font-size:0.78rem;color:var(--muted);text-align:center;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:6px}
-.sidebar-empty-icon{font-size:1.6rem;opacity:.5}
 .sidebar-skeleton{height:34px;border-radius:9px;background:linear-gradient(90deg,var(--surface2) 25%,#233a63 37%,var(--surface2) 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;margin-bottom:6px}
 @keyframes shimmer{0%{background-position:100% 50%}100%{background-position:0 50%}}
 
@@ -60,7 +72,17 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:10px 1
 /* Draggable seat units */
 .seat-unit{touch-action:none}
 .seat-unit.dragging-seat{opacity:.85}
+.seat-unit.blocked-seat{filter:drop-shadow(0 0 6px rgba(252,92,125,.8))}
 .char-anim{transform-box:fill-box}
+.seat-rotate-btn{cursor:pointer}
+.seat-rotate-btn circle{fill:rgba(15,27,53,.88);stroke:var(--accent2);stroke-width:1.5;transition:fill .15s}
+.seat-rotate-btn:hover circle{fill:var(--accent2)}
+.seat-rotate-btn text{font-size:13px;fill:#eef2ff;pointer-events:none;text-anchor:middle}
+.seat-rotate-btn:hover text{fill:#0f1b35}
+
+/* Wall furniture (class switch board) */
+.wall-furniture{cursor:pointer;transition:transform .15s}
+.wall-furniture:hover{transform:scale(1.05)}
 
 .class-info{position:absolute;top:14px;right:14px;background:rgba(25,40,71,.92);border:1.5px solid #2e4880;border-radius:12px;padding:10px 16px;z-index:60;font-size:0.8rem;backdrop-filter:blur(6px);min-width:150px}
 .class-info-titlerow{display:flex;align-items:center;gap:6px;margin-bottom:6px}
@@ -157,11 +179,9 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:10px 1
 
 /* RESPONSIVE */
 @media(max-width:760px){
-  .sidebar{width:100%;max-height:120px;border-right:none;border-bottom:1px solid #2a3f6e;padding:10px}
-  .sidebar h2{display:none}
-  .class-list{flex-direction:row;overflow-x:auto;margin-bottom:8px;padding-bottom:2px}
-  .class-item{flex-shrink:0;white-space:nowrap}
-  .sidebar-btn{width:auto;padding:8px 14px;flex-shrink:0}
+  .sidebar{width:100%;max-height:170px;border-right:none;border-bottom:1px solid #2a3f6e;padding:10px}
+  .scoreboard-list{flex-direction:row;overflow-x:auto;overflow-y:hidden;gap:8px}
+  .score-card{flex-shrink:0;min-width:120px}
   .body-layout{flex-direction:column}
   .scene-toolbar{top:8px;left:8px;right:8px;gap:6px}
   .tool-btn{padding:7px 10px;font-size:0.74rem}
@@ -204,11 +224,10 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:10px 1
   </nav>
 
   <div class="body-layout">
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR: SCOREBOARD -->
     <div class="sidebar">
-      <h2>Kelas Anda</h2>
-      <div class="class-list" id="class-list"><div class="sidebar-empty">Memuatkan...</div></div>
-      <button class="sidebar-btn" onclick="openModal('new-class-modal')">+ Kelas Baru</button>
+      <h2 id="scoreboard-title">📊 Markah Individu</h2>
+      <div class="scoreboard-list" id="scoreboard-list"><div class="sidebar-empty">Memuatkan...</div></div>
     </div>
 
     <!-- SCENE -->
@@ -242,6 +261,18 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:10px 1
       <div class="loading-screen" id="loading-screen">
         <div class="spinner"></div><div>Memuatkan kelas...</div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- SWITCH CLASS MODAL (opened via wall board in scene) -->
+<div class="modal-overlay" id="switch-class-modal">
+  <div class="modal-box">
+    <h3>🔀 Tukar Kelas</h3>
+    <div class="class-list" id="switch-class-list"><div class="sidebar-empty">Memuatkan...</div></div>
+    <button class="sidebar-btn" onclick="openModal('new-class-modal')">+ Kelas Baru</button>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal('switch-class-modal')" style="width:100%">Tutup</button>
     </div>
   </div>
 </div>
@@ -500,6 +531,7 @@ async function createNewClass(){
   const{data,error}=await sb.from('classes').insert(newClass).select().single();
   if(error){showToast('Ralat: '+error.message,'err');return;}
   closeModal('new-class-modal');
+  closeModal('switch-class-modal');
   input.value='';
   await refreshClassList();
   selectClass(data.id);
@@ -510,11 +542,18 @@ async function refreshClassList(){
   const{data,error}=await sb.from('classes').select('id,name,students').eq('user_id',currentUser.id).order('created_at',{ascending:false});
   if(error)return;
   allClasses=data||[];
-  renderClassListSidebar();
+  renderClassSwitchList();
 }
 
-function renderClassListSidebar(){
-  const list=document.getElementById('class-list');
+async function openSwitchClassModal(){
+  openModal('switch-class-modal');
+  document.getElementById('switch-class-list').innerHTML='<div class="sidebar-empty">Memuatkan...</div>';
+  await refreshClassList();
+}
+
+function renderClassSwitchList(){
+  const list=document.getElementById('switch-class-list');
+  if(!list)return;
   if(!allClasses.length){
     list.innerHTML='<div class="sidebar-empty"><span class="sidebar-empty-icon">🏫</span>Tiada kelas lagi</div>';
     return;
@@ -525,8 +564,9 @@ function renderClassListSidebar(){
     const item=document.createElement('div');
     item.className='class-item'+(currentClass?.id===c.id?' active':'');
     item.innerHTML=`<span class="class-item-name">${c.name}</span><span class="class-item-count">${count}👤</span><button class="class-item-del" title="Padam">🗑️</button>`;
-    item.querySelector('.class-item-name').onclick=()=>selectClass(c.id);
-    item.querySelector('.class-item-count').onclick=()=>selectClass(c.id);
+    const selectAndClose=()=>{selectClass(c.id);closeModal('switch-class-modal');};
+    item.querySelector('.class-item-name').onclick=selectAndClose;
+    item.querySelector('.class-item-count').onclick=selectAndClose;
     item.querySelector('.class-item-del').onclick=(e)=>{
       e.stopPropagation();
       openConfirm(`Padam "${c.name}"?`,'Semua data murid, kumpulan dan markah dalam kelas ini akan dipadam kekal.',async()=>{
@@ -588,7 +628,7 @@ async function selectClass(classId){
   marks=data.marks||{};
   grouping=data.grouping||null;
   seatingLayout=data.seating_layout||{};
-  renderClassListSidebar();
+  renderClassSwitchList();
   updateClassInfo();
   renderScene();
 }
@@ -620,6 +660,7 @@ function setSceneMode(mode){
   sceneMode=mode;
   document.querySelectorAll('.view-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
   renderScene();
+  renderScoreboard();
 }
 
 // ══════════════════════════════
@@ -726,7 +767,7 @@ function showLeaderboard(){
   sorted.forEach((s,i)=>{
     const row=document.createElement('div');
     row.className='lb-row'+(i<3?' top'+(i+1):'');
-    const color=GROUP_HEX[(s.group_id-1+6)%6]||'#8899bb';
+    const color=s.group_id?GROUP_HEX[(s.group_id-1+6)%6]:'#556b8f';
     const rankDisplay=i<3?medals[i]:(i+1);
     row.innerHTML=`<div class="lb-rank">${rankDisplay}</div><div class="lb-dot" style="background:${color}"></div><div class="lb-name">${s.name}</div><div class="lb-pts">${marks[s.id]||0}</div>`;
     list.appendChild(row);
@@ -763,7 +804,7 @@ function drawAvatarSVG(container,color){
 function openStudentPopup(studentId){
   const student=students.find(s=>s.id===studentId);
   if(!student)return;
-  const color=GROUP_HEX[(student.group_id-1+6)%6]||'#8899bb';
+  const color=student.group_id?GROUP_HEX[(student.group_id-1+6)%6]:'#556b8f';
   drawAvatarSVG(document.getElementById('popup-avatar-svg'),color);
   document.getElementById('popup-name').textContent=student.name;
   document.getElementById('popup-group-tag').textContent=student.group_id?`Kumpulan ${student.group_id}`:'Belum berkumpulan';
@@ -798,7 +839,58 @@ async function savePoints(){
   await saveClassData();
   closeModal('points-modal');
   openStudentPopup(window.selectedStudentId);
+  renderScoreboard();
   if(student)showToast(`${val>0?'+':''}${val} mata untuk ${student.name}`,'ok');
+}
+
+// ══════════════════════════════
+// SCOREBOARD (LEFT PANEL)
+// ══════════════════════════════
+function renderScoreboard(){
+  const panel=document.getElementById('scoreboard-list');
+  const title=document.getElementById('scoreboard-title');
+  if(!panel||!title)return;
+  panel.innerHTML='';
+
+  if(!currentClass){
+    title.textContent='📊 Markah';
+    panel.innerHTML='<div class="sidebar-empty"><span class="sidebar-empty-icon">🏫</span>Pilih kelas dahulu</div>';
+    return;
+  }
+
+  if(sceneMode==='group'){
+    title.textContent='📊 Markah Kumpulan';
+    if(!grouping||!grouping.length){
+      panel.innerHTML='<div class="sidebar-empty"><span class="sidebar-empty-icon">⭕</span>Belum ada kumpulan</div>';
+      return;
+    }
+    const rows=grouping.map((g,i)=>({
+      label:`Kumpulan ${g.group_id}`,
+      count:g.members.length,
+      points:g.members.reduce((sum,id)=>sum+(marks[id]||0),0),
+      color:GROUP_HEX[i%6]
+    })).sort((a,b)=>b.points-a.points);
+    rows.forEach((r,idx)=>{
+      const card=document.createElement('div');card.className='score-card';
+      card.innerHTML=`<div class="score-rank-num">${idx+1}</div><div class="score-avatar" style="background:${r.color}">${r.count}</div><div class="score-name-wrap"><div class="score-name">${r.label}</div><div class="score-sub">${r.count} murid</div></div><div class="score-pts">${r.points}</div>`;
+      panel.appendChild(card);
+    });
+  }else{
+    title.textContent='📊 Markah Individu';
+    if(!students.length){
+      panel.innerHTML='<div class="sidebar-empty"><span class="sidebar-empty-icon">🧑‍🎓</span>Belum ada murid</div>';
+      return;
+    }
+    const rows=[...students].sort((a,b)=>(marks[b.id]||0)-(marks[a.id]||0));
+    rows.forEach((s,idx)=>{
+      const color=s.group_id?GROUP_HEX[(s.group_id-1+6)%6]:'#556b8f';
+      const initials=s.name.substring(0,2).toUpperCase();
+      const card=document.createElement('div');card.className='score-card';
+      card.onclick=()=>openStudentPopup(s.id);
+      card.innerHTML=`<div class="score-rank-num">${idx+1}</div><div class="score-avatar" style="background:${color}">${initials}</div><div class="score-name">${s.name}</div><div class="score-pts">${marks[s.id]||0}</div>`;
+      panel.appendChild(card);
+    });
+  }
 }
 
 // ══════════════════════════════
@@ -865,6 +957,20 @@ function drawClassroomDecor(svg,W,H){
   bsLabel.textContent='📚 Rak Buku';
   svg.appendChild(bsLabel);
 
+  // Class-switch board — mounted on right wall, opens the class picker
+  const scX=W-152,scY=260;
+  const switchBtn=el('g',{class:'wall-furniture'});
+  switchBtn.appendChild(el('rect',{x:scX,y:scY,width:112,height:76,rx:10,fill:'#1e3259',stroke:'#4fd1c5','stroke-width':3}));
+  switchBtn.appendChild(el('circle',{cx:scX+56,cy:scY+30,r:17,fill:'#4fd1c5'}));
+  const switchIcon=el('text',{x:scX+56,y:scY+37,'text-anchor':'middle','font-size':18});
+  switchIcon.textContent='🔀';
+  switchBtn.appendChild(switchIcon);
+  const switchLabel=el('text',{x:scX+56,y:scY+64,'text-anchor':'middle','font-family':'Nunito','font-weight':800,'font-size':11,fill:'#eef2ff'});
+  switchLabel.textContent='Tukar Kelas';
+  switchBtn.appendChild(switchLabel);
+  switchBtn.addEventListener('click',()=>openSwitchClassModal());
+  svg.appendChild(switchBtn);
+
   function plant(cx,cy){
     svg.appendChild(el('ellipse',{cx,cy:cy+10,rx:16,ry:6,fill:'rgba(0,0,0,.25)'}));
     svg.appendChild(el('rect',{x:cx-10,y:cy-4,width:20,height:16,fill:'#8b6f47',rx:3}));
@@ -904,49 +1010,83 @@ function buildCharacterGroup(s,color){
   return charG;
 }
 
-// ── SEATING VIEW (draggable desks) ──
+// ── SEATING VIEW (draggable, rotatable desks) ──
+const SEAT_MIN_DIST=125;
+
 function renderSeatingUnits(svg,W,H){
   const cols=6,startX=180,startY=230,spacingX=155,spacingY=140;
   students.forEach((s,idx)=>{
     const row=Math.floor(idx/cols),col=idx%cols;
     const defaultX=Math.min(startX+col*spacingX,W-100);
     const defaultY=Math.min(startY+row*spacingY,H-100);
-    const pos=seatingLayout[s.id]||{x:defaultX,y:defaultY};
-    svg.appendChild(buildSeatUnit(s,pos.x,pos.y));
+    const pos=seatingLayout[s.id]||{x:defaultX,y:defaultY,rot:0};
+    svg.appendChild(buildSeatUnit(s,pos.x,pos.y,pos.rot||0));
   });
 }
 
-function buildSeatUnit(s,x,y){
-  const color=GROUP_HEX[(s.group_id-1+6)%6]||'#8899bb';
-  const g=el('g',{class:'seat-unit','data-student-id':s.id,transform:`translate(${x},${y})`});
+function buildSeatUnit(s,x,y,rot){
+  const color=s.group_id?GROUP_HEX[(s.group_id-1+6)%6]:'#556b8f';
+  const g=el('g',{class:'seat-unit','data-student-id':s.id,'data-rot':rot||0,transform:`translate(${x},${y})`});
   g.style.cursor='grab';
 
-  g.appendChild(el('rect',{x:-40,y:-8,width:80,height:36,rx:6,fill:'#a3855a',stroke:'#7a6339','stroke-width':2.5}));
-  g.appendChild(el('rect',{x:-32,y:-2,width:64,height:8,rx:2,fill:'#c9a876'}));
+  // Desk graphic — this part rotates
+  const deskG=el('g',{class:'desk-shape',transform:`rotate(${rot||0})`});
+  deskG.appendChild(el('rect',{x:-40,y:-8,width:80,height:36,rx:6,fill:'#a3855a',stroke:'#7a6339','stroke-width':2.5}));
+  deskG.appendChild(el('rect',{x:-32,y:-2,width:64,height:8,rx:2,fill:'#c9a876'}));
+  g.appendChild(deskG);
 
+  // Character + label — always stays upright, never rotates
   const charWrap=el('g',{transform:'translate(0,48)'});
   charWrap.appendChild(buildCharacterGroup(s,color));
   g.appendChild(charWrap);
 
+  // Rotate handle — fixed position, always upright
+  const rotateBtn=el('g',{class:'seat-rotate-btn',transform:'translate(46,-22)'});
+  rotateBtn.appendChild(el('circle',{cx:0,cy:0,r:12}));
+  const rotIcon=el('text',{x:0,y:4});
+  rotIcon.textContent='↻';
+  rotateBtn.appendChild(rotIcon);
+  rotateBtn.addEventListener('pointerdown',e=>e.stopPropagation());
+  rotateBtn.addEventListener('click',e=>{e.stopPropagation();rotateSeat(g,s.id);});
+  g.appendChild(rotateBtn);
+
   attachDragHandlers(g,s.id);
   return g;
+}
+
+async function rotateSeat(g,studentId){
+  const current=parseInt(g.getAttribute('data-rot'))||0;
+  const next=(current+45)%360;
+  g.setAttribute('data-rot',next);
+  g.querySelector('.desk-shape').setAttribute('transform',`rotate(${next})`);
+  const matrix=g.transform.baseVal.consolidate().matrix;
+  seatingLayout[studentId]={x:matrix.e,y:matrix.f,rot:next};
+  await saveClassData();
 }
 
 function attachDragHandlers(g,studentId){
   g.addEventListener('pointerdown',e=>startDrag(e,g,studentId));
   g.addEventListener('pointermove',e=>{if(dragState&&dragState.g===g)onSeatPointerMove(e);});
   g.addEventListener('pointerup',e=>{if(dragState&&dragState.g===g)onSeatPointerUp(e);});
-  g.addEventListener('pointercancel',()=>{if(dragState&&dragState.g===g){g.classList.remove('dragging-seat');dragState=null;}});
+  g.addEventListener('pointercancel',()=>{if(dragState&&dragState.g===g){g.classList.remove('dragging-seat','blocked-seat');dragState=null;}});
 }
 
 function startDrag(evt,g,studentId){
   if(sceneMode!=='seating')return;
+  if(evt.target.closest('.seat-rotate-btn'))return;
   evt.preventDefault();
   const svg=document.getElementById('scene-svg');
   const pt=getSVGPoint(svg,evt);
   const matrix=g.transform.baseVal.consolidate().matrix;
+  const others=[];
+  svg.querySelectorAll('.seat-unit').forEach(el2=>{
+    if(el2.getAttribute('data-student-id')===studentId)return;
+    const m=el2.transform.baseVal.consolidate().matrix;
+    others.push({x:m.e,y:m.f});
+  });
   dragState={g,studentId,offsetX:pt.x-matrix.e,offsetY:pt.y-matrix.f,
-    moved:false,startClientX:evt.clientX,startClientY:evt.clientY,pendingX:matrix.e,pendingY:matrix.f};
+    moved:false,startClientX:evt.clientX,startClientY:evt.clientY,
+    pendingX:matrix.e,pendingY:matrix.f,others};
   g.setPointerCapture(evt.pointerId);
   g.classList.add('dragging-seat');
 }
@@ -959,18 +1099,26 @@ function onSeatPointerMove(evt){
   let ny=Math.round((pt.y-dragState.offsetY)/grid)*grid;
   nx=Math.max(90,Math.min(1110,nx));
   ny=Math.max(140,Math.min(760,ny));
-  dragState.g.setAttribute('transform',`translate(${nx},${ny})`);
-  dragState.pendingX=nx;dragState.pendingY=ny;
+
+  const collides=dragState.others.some(o=>Math.hypot(o.x-nx,o.y-ny)<SEAT_MIN_DIST);
+  if(!collides){
+    dragState.g.setAttribute('transform',`translate(${nx},${ny})`);
+    dragState.pendingX=nx;dragState.pendingY=ny;
+    dragState.g.classList.remove('blocked-seat');
+  }else{
+    dragState.g.classList.add('blocked-seat');
+  }
   const dx=evt.clientX-dragState.startClientX,dy=evt.clientY-dragState.startClientY;
   if(Math.hypot(dx,dy)>6)dragState.moved=true;
 }
 
 async function onSeatPointerUp(evt){
   const{g,studentId,pendingX,pendingY,moved}=dragState;
-  g.classList.remove('dragging-seat');
+  g.classList.remove('dragging-seat','blocked-seat');
   try{g.releasePointerCapture(evt.pointerId)}catch{}
   if(moved){
-    seatingLayout[studentId]={x:pendingX,y:pendingY};
+    const rot=parseInt(g.getAttribute('data-rot'))||0;
+    seatingLayout[studentId]={x:pendingX,y:pendingY,rot};
     await saveClassData();
   }else{
     openStudentPopup(studentId);
@@ -1020,6 +1168,8 @@ function renderScene(){
   const W=1200,H=800;
   svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
 
+  renderScoreboard();
+
   if(!currentClass){emptyDiv.style.display='flex';return;}
   emptyDiv.style.display='none';
 
@@ -1049,6 +1199,7 @@ async function init(){
     await selectClass(allClasses[0].id);
   }else{
     document.getElementById('empty-scene').style.display='flex';
+    renderScoreboard();
   }
 }
 init();
