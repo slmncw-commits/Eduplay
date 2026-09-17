@@ -30,21 +30,18 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:10px 1
 .body-layout{flex:1;display:flex;min-height:0}
 
 /* SIDEBAR / SCOREBOARD */
-.sidebar{width:230px;background:var(--surface);border-right:1px solid #2a3f6e;padding:14px;flex-shrink:0;display:flex;flex-direction:column;height:100%;min-height:0}
-.sidebar h2{font-size:0.72rem;color:var(--accent2);font-weight:700;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px;flex-shrink:0}
-.scoreboard-list{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-right:2px}
-.score-card{display:flex;align-items:center;gap:10px;background:var(--surface2);border-radius:14px;padding:8px 10px;cursor:pointer;transition:transform .15s,background .15s;flex-shrink:0}
-.score-card:hover{transform:translateX(3px);background:#22375f}
-.score-rank-num{font-family:var(--fd);font-weight:900;color:var(--muted);font-size:0.72rem;width:14px;text-align:center;flex-shrink:0}
-.score-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.7rem;color:#fff;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.3);border:2px solid rgba(255,255,255,.25)}
-.score-name{flex:1;font-size:0.82rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.score-name-wrap{flex:1;min-width:0;overflow:hidden}
-.score-name-wrap .score-name{font-size:0.82rem}
-.score-sub{font-size:0.68rem;color:var(--muted);font-weight:600}
-.score-pts{font-weight:900;color:var(--accent);font-size:0.85rem;flex-shrink:0}
+.sidebar{width:460px;background:var(--surface);border-right:1px solid #2a3f6e;padding:18px;flex-shrink:0;display:flex;flex-direction:column;height:100%;min-height:0}
+.sidebar h2{font-size:0.8rem;color:var(--accent2);font-weight:700;text-transform:uppercase;margin-bottom:14px;letter-spacing:.5px;flex-shrink:0}
+.scoreboard-list{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:14px 10px;align-content:start;padding-right:2px}
+.score-card{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;position:relative;padding:4px 2px;border-radius:12px;transition:transform .15s,background .15s}
+.score-card:hover{transform:translateY(-3px);background:rgba(255,255,255,.04)}
+.score-rank-badge{position:absolute;top:-2px;left:50%;transform:translateX(-26px);background:var(--surface2);border:1.5px solid #2e4880;color:var(--muted);font-family:var(--fd);font-weight:800;font-size:0.62rem;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.score-avatar{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-family:var(--fd);font-size:1.35rem;color:#fff;flex-shrink:0;box-shadow:0 3px 10px rgba(0,0,0,.35);border:3px solid rgba(255,255,255,.3)}
+.score-name{font-size:0.74rem;font-weight:700;text-align:center;line-height:1.25;word-break:break-word;max-width:100%}
+.score-sub{font-size:0.64rem;color:var(--muted);font-weight:600;text-align:center}
 .sidebar-btn{width:100%;padding:9px;background:var(--accent);color:#1a1200;border:none;border-radius:9px;font-weight:800;font-size:0.8rem;cursor:pointer;margin-bottom:6px;transition:transform .15s;flex-shrink:0}
 .sidebar-btn:hover{transform:translateY(-1px)}
-.sidebar-empty{font-size:0.78rem;color:var(--muted);text-align:center;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.sidebar-empty{grid-column:1/-1;font-size:0.78rem;color:var(--muted);text-align:center;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:6px}
 .sidebar-empty-icon{font-size:1.6rem;opacity:.5}
 
 /* Class list (used inside Switch Class modal now) */
@@ -73,18 +70,30 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:10px 1
 .seat-unit{touch-action:none}
 .seat-unit.dragging-seat{opacity:.85}
 .seat-unit.blocked-seat{filter:drop-shadow(0 0 6px rgba(252,92,125,.8))}
+.seat-unit.snapping-seat{filter:drop-shadow(0 0 8px rgba(79,209,197,.9))}
 .char-anim{transform-box:fill-box}
+.char-unit{touch-action:none}
+.char-unit.dragging-char{opacity:.85}
+.char-unit.blocked-char{filter:drop-shadow(0 0 6px rgba(252,92,125,.8))}
 .seat-rotate-btn{cursor:pointer}
 .seat-rotate-btn circle{fill:rgba(15,27,53,.88);stroke:var(--accent2);stroke-width:1.5;transition:fill .15s}
 .seat-rotate-btn:hover circle{fill:var(--accent2)}
-.seat-rotate-btn text{font-size:13px;fill:#eef2ff;pointer-events:none;text-anchor:middle}
+.seat-rotate-btn text{font-size:20px;fill:#eef2ff;pointer-events:none;text-anchor:middle}
 .seat-rotate-btn:hover text{fill:#0f1b35}
+
+/* Edit Layout button (top-right corner) */
+.top-right-stack{position:absolute;top:14px;right:14px;z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.edit-layout-btn{display:flex;align-items:center;gap:6px;background:rgba(25,40,71,.92);border:1.5px solid #2e4880;color:var(--text);padding:9px 16px;border-radius:12px;font-size:0.82rem;font-weight:700;cursor:pointer;transition:all .15s;backdrop-filter:blur(6px)}
+.edit-layout-btn:hover{border-color:var(--accent2);transform:translateY(-2px)}
+.edit-layout-btn.active{background:var(--accent);color:#1a1200;border-color:var(--accent)}
+.edit-mode-banner{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(247,201,72,.95);color:#1a1200;padding:8px 20px;border-radius:20px;font-size:0.82rem;font-weight:800;z-index:60;display:none;box-shadow:0 4px 16px rgba(0,0,0,.3);max-width:90%;text-align:center}
+.edit-mode-banner.show{display:block}
 
 /* Wall furniture (class switch board) */
 .wall-furniture{cursor:pointer;transition:transform .15s}
 .wall-furniture:hover{transform:scale(1.05)}
 
-.class-info{position:absolute;top:14px;right:14px;background:rgba(25,40,71,.92);border:1.5px solid #2e4880;border-radius:12px;padding:10px 16px;z-index:60;font-size:0.8rem;backdrop-filter:blur(6px);min-width:150px}
+.class-info{background:rgba(25,40,71,.92);border:1.5px solid #2e4880;border-radius:12px;padding:10px 16px;font-size:0.8rem;backdrop-filter:blur(6px);min-width:150px}
 .class-info-titlerow{display:flex;align-items:center;gap:6px;margin-bottom:6px}
 .class-info-title{font-family:var(--fd);font-weight:800;color:var(--accent);font-size:0.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px}
 .class-info-icon-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.78rem;padding:2px;transition:color .15s;flex-shrink:0}
@@ -108,7 +117,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:10px 1
 .empty-scene-icon{font-size:3.4rem;opacity:.5}
 
 /* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:400;align-items:center;justify-content:center;padding:16px;animation:fadeIn .15s ease}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:450;align-items:center;justify-content:center;padding:16px;animation:fadeIn .15s ease}
 .modal-overlay.open{display:flex}
 .modal-box{background:var(--surface2);border:1.5px solid #3a5080;border-radius:20px;padding:26px;max-width:440px;width:100%;max-height:85vh;overflow-y:auto;animation:modalPop .2s cubic-bezier(.34,1.56,.64,1)}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -179,14 +188,16 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:10px 1
 
 /* RESPONSIVE */
 @media(max-width:760px){
-  .sidebar{width:100%;max-height:170px;border-right:none;border-bottom:1px solid #2a3f6e;padding:10px}
-  .scoreboard-list{flex-direction:row;overflow-x:auto;overflow-y:hidden;gap:8px}
-  .score-card{flex-shrink:0;min-width:120px}
+  .sidebar{width:100%;max-height:230px;border-right:none;border-bottom:1px solid #2a3f6e;padding:10px}
+  .scoreboard-list{grid-template-columns:repeat(4,1fr);gap:10px 6px}
+  .score-avatar{width:48px;height:48px;font-size:1rem}
   .body-layout{flex-direction:column}
   .scene-toolbar{top:8px;left:8px;right:8px;gap:6px}
   .tool-btn{padding:7px 10px;font-size:0.74rem}
-  .class-info{top:auto;bottom:8px;right:8px;left:8px;display:flex !important;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .class-info{width:100%}
   .class-info-legend{width:100%}
+  .top-right-stack{top:auto;bottom:8px;right:8px;left:8px;align-items:stretch}
+  .edit-layout-btn{justify-content:center}
 }
 
 /* Student popup */
@@ -203,6 +214,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:10px 1
 .popup-section h4{font-size:0.72rem;color:var(--accent2);font-weight:700;text-transform:uppercase;margin-bottom:6px;letter-spacing:.3px}
 .points-display{text-align:center;font-family:var(--fd);font-size:2.2rem;font-weight:900;color:var(--accent)}
 .popup-actions button{width:100%;padding:9px;background:var(--accent);color:#1a1200;border:none;border-radius:9px;font-weight:700;font-size:0.85rem;cursor:pointer;margin-top:8px}
+.popup-actions button.btn-return{background:var(--surface2);color:var(--text);border:1.5px solid #2e4880}
 
 .loading-screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--muted)}
 .spinner{width:36px;height:36px;border:4px solid rgba(79,209,197,.2);border-top-color:var(--accent2);border-radius:50%;animation:spin .8s linear infinite}
@@ -241,16 +253,20 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:10px 1
         <button class="tool-btn" onclick="openModal('group-modal')">🎲 Bahagi Kumpulan</button>
         <button class="tool-btn" onclick="showLeaderboard()">🏆 Papan Markah</button>
       </div>
-      <div class="class-info" id="class-info-box" style="display:none">
-        <div class="class-info-titlerow">
-          <div class="class-info-title" id="class-title">—</div>
-          <button class="class-info-icon-btn" title="Namakan semula" onclick="openRenameClass()">✏️</button>
-          <button class="class-info-icon-btn danger" title="Padam kelas" onclick="confirmDeleteClass()">🗑️</button>
+      <div class="top-right-stack">
+        <div class="class-info" id="class-info-box" style="display:none">
+          <div class="class-info-titlerow">
+            <div class="class-info-title" id="class-title">—</div>
+            <button class="class-info-icon-btn" title="Namakan semula" onclick="openRenameClass()">✏️</button>
+            <button class="class-info-icon-btn danger" title="Padam kelas" onclick="confirmDeleteClass()">🗑️</button>
+          </div>
+          <div class="class-info-row"><span>Murid:</span> <strong id="info-students">0</strong></div>
+          <div class="class-info-row"><span>Kumpulan:</span> <strong id="info-groups">0</strong></div>
+          <div class="class-info-legend" id="class-info-legend"></div>
         </div>
-        <div class="class-info-row"><span>Murid:</span> <strong id="info-students">0</strong></div>
-        <div class="class-info-row"><span>Kumpulan:</span> <strong id="info-groups">0</strong></div>
-        <div class="class-info-legend" id="class-info-legend"></div>
+        <button class="edit-layout-btn" id="edit-layout-btn" onclick="toggleEditLayout()">✏️ Edit Susun Atur</button>
       </div>
+      <div class="edit-mode-banner" id="edit-mode-banner">🛠️ Mod Edit Aktif — seret &amp; putar meja. Murid yang belum dipindah akan ikut meja.</div>
       <svg class="scene-svg" id="scene-svg"></svg>
       <div class="empty-scene" id="empty-scene" style="display:none">
         <div class="empty-scene-icon">🏫</div>
@@ -418,7 +434,10 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:10px 1
   <div class="popup-section">
     <h4>📊 Markah Individu</h4>
     <div class="points-display" id="popup-points">0</div>
-    <div class="popup-actions"><button onclick="openAddPointsModal()">+ Tambah Markah</button></div>
+    <div class="popup-actions">
+      <button onclick="openAddPointsModal()">+ Tambah Markah</button>
+      <button class="btn-return" id="popup-return-btn" onclick="returnStudentToChair()">🪑 Kembali ke Kerusi</button>
+    </div>
   </div>
 </div>
 
@@ -433,7 +452,8 @@ const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
 const SESSION_KEY='eduplay_session';
 let currentUser=null,currentClass=null;
 let students=[],marks={},grouping=null;
-let seatingLayout={};
+let deskLayout={},studentOverrides={};
+let editLayoutMode=false;
 let sceneMode='seating';
 let allClasses=[];
 let dragState=null;
@@ -527,7 +547,7 @@ async function createNewClass(){
     setTimeout(()=>input.classList.remove('field-error'),350);
     return;
   }
-  const newClass={user_id:currentUser.id,name,students:[],grouping:null,marks:{},group_marks:{},seating_layout:{}};
+  const newClass={user_id:currentUser.id,name,students:[],grouping:null,marks:{},group_marks:{},seating_layout:{desks:{},students:{}}};
   const{data,error}=await sb.from('classes').insert(newClass).select().single();
   if(error){showToast('Ralat: '+error.message,'err');return;}
   closeModal('new-class-modal');
@@ -572,7 +592,7 @@ function renderClassSwitchList(){
       openConfirm(`Padam "${c.name}"?`,'Semua data murid, kumpulan dan markah dalam kelas ini akan dipadam kekal.',async()=>{
         await sb.from('classes').delete().eq('id',c.id);
         if(currentClass?.id===c.id){
-          currentClass=null;students=[];marks={};grouping=null;seatingLayout={};
+          currentClass=null;students=[];marks={};grouping=null;deskLayout={};studentOverrides={};
           document.getElementById('class-info-box').style.display='none';
         }
         await refreshClassList();
@@ -608,7 +628,7 @@ function confirmDeleteClass(){
   openConfirm(`Padam "${currentClass.name}"?`,'Semua data murid, kumpulan dan markah dalam kelas ini akan dipadam kekal.',async()=>{
     const deletedId=currentClass.id;
     await sb.from('classes').delete().eq('id',deletedId);
-    currentClass=null;students=[];marks={};grouping=null;seatingLayout={};
+    currentClass=null;students=[];marks={};grouping=null;deskLayout={};studentOverrides={};
     document.getElementById('class-info-box').style.display='none';
     await refreshClassList();
     if(allClasses.length)await selectClass(allClasses[0].id);
@@ -627,7 +647,9 @@ async function selectClass(classId){
   students=data.students||[];
   marks=data.marks||{};
   grouping=data.grouping||null;
-  seatingLayout=data.seating_layout||{};
+  const rawLayout=data.seating_layout||{};
+  deskLayout=rawLayout.desks||{};
+  studentOverrides=rawLayout.students||{};
   renderClassSwitchList();
   updateClassInfo();
   renderScene();
@@ -652,7 +674,7 @@ function updateClassInfo(){
 async function saveClassData(){
   if(!currentClass)return;
   await sb.from('classes').update({
-    students,grouping,marks,group_marks:{},seating_layout:seatingLayout,updated_at:new Date().toISOString()
+    students,grouping,marks,group_marks:{},seating_layout:{desks:deskLayout,students:studentOverrides},updated_at:new Date().toISOString()
   }).eq('id',currentClass.id);
 }
 
@@ -726,7 +748,8 @@ async function addStudentsBulk(){
 async function removeStudent(id){
   students=students.filter(s=>s.id!==id);
   delete marks[id];
-  delete seatingLayout[id];
+  delete deskLayout[id];
+  delete studentOverrides[id];
   if(grouping)grouping.forEach(g=>g.members=g.members.filter(m=>m!==id));
   renderRosterList();
   updateClassInfo();
@@ -811,11 +834,20 @@ function openStudentPopup(studentId){
   document.getElementById('popup-points').textContent=marks[studentId]||0;
   document.getElementById('student-popup').classList.remove('hidden');
   document.getElementById('popup-overlay').classList.add('open');
+  document.getElementById('popup-return-btn').style.display=studentOverrides[studentId]?'block':'none';
   window.selectedStudentId=studentId;
 }
 function closeStudentPopup(){
   document.getElementById('student-popup').classList.add('hidden');
   document.getElementById('popup-overlay').classList.remove('open');
+}
+async function returnStudentToChair(){
+  if(!window.selectedStudentId)return;
+  delete studentOverrides[window.selectedStudentId];
+  await saveClassData();
+  renderScene();
+  openStudentPopup(window.selectedStudentId);
+  showToast('🪑 Murid dikembalikan ke kerusi','ok');
 }
 function openAddPointsModal(){
   document.getElementById('points-input').value='5';
@@ -872,7 +904,7 @@ function renderScoreboard(){
     })).sort((a,b)=>b.points-a.points);
     rows.forEach((r,idx)=>{
       const card=document.createElement('div');card.className='score-card';
-      card.innerHTML=`<div class="score-rank-num">${idx+1}</div><div class="score-avatar" style="background:${r.color}">${r.count}</div><div class="score-name-wrap"><div class="score-name">${r.label}</div><div class="score-sub">${r.count} murid</div></div><div class="score-pts">${r.points}</div>`;
+      card.innerHTML=`<div class="score-rank-badge">${idx+1}</div><div class="score-avatar" style="background:${r.color}">${r.points}</div><div class="score-name">${r.label}</div><div class="score-sub">${r.count} murid</div>`;
       panel.appendChild(card);
     });
   }else{
@@ -884,10 +916,9 @@ function renderScoreboard(){
     const rows=[...students].sort((a,b)=>(marks[b.id]||0)-(marks[a.id]||0));
     rows.forEach((s,idx)=>{
       const color=s.group_id?GROUP_HEX[(s.group_id-1+6)%6]:'#556b8f';
-      const initials=s.name.substring(0,2).toUpperCase();
       const card=document.createElement('div');card.className='score-card';
       card.onclick=()=>openStudentPopup(s.id);
-      card.innerHTML=`<div class="score-rank-num">${idx+1}</div><div class="score-avatar" style="background:${color}">${initials}</div><div class="score-name">${s.name}</div><div class="score-pts">${marks[s.id]||0}</div>`;
+      card.innerHTML=`<div class="score-rank-badge">${idx+1}</div><div class="score-avatar" style="background:${color}">${marks[s.id]||0}</div><div class="score-name">${s.name}</div>`;
       panel.appendChild(card);
     });
   }
@@ -989,15 +1020,16 @@ function drawCenterMessage(svg,W,H,msg){
 }
 
 // Blank/idle-animated character, drawn around local origin (0,0)
+// Blank/idle-animated character, drawn around local origin (0,0) — 2x scale
 function buildCharacterGroup(s,color){
   const charG=el('g',{class:'char-anim'});
-  charG.appendChild(el('ellipse',{cx:0,cy:22,rx:20,ry:6,fill:'rgba(0,0,0,.3)'}));
-  const body=el('circle',{cx:0,cy:6,r:22,fill:color,stroke:'#fff','stroke-width':2});
+  charG.appendChild(el('ellipse',{cx:0,cy:44,rx:40,ry:12,fill:'rgba(0,0,0,.3)'}));
+  const body=el('circle',{cx:0,cy:12,r:44,fill:color,stroke:'#fff','stroke-width':3});
   charG.appendChild(body);
-  charG.appendChild(el('circle',{cx:0,cy:-14,r:15,fill:'#f0d9b5',stroke:'#fff','stroke-width':2}));
-  charG.appendChild(el('circle',{cx:-5,cy:-14,r:1.8,fill:'#2a2a2a'}));
-  charG.appendChild(el('circle',{cx:5,cy:-14,r:1.8,fill:'#2a2a2a'}));
-  const label=el('text',{x:0,y:38,class:'char-label'});
+  charG.appendChild(el('circle',{cx:0,cy:-28,r:30,fill:'#f0d9b5',stroke:'#fff','stroke-width':3}));
+  charG.appendChild(el('circle',{cx:-10,cy:-28,r:3.6,fill:'#2a2a2a'}));
+  charG.appendChild(el('circle',{cx:10,cy:-28,r:3.6,fill:'#2a2a2a'}));
+  const label=el('text',{x:0,y:76,class:'char-label'});
   label.textContent=s.name.length>10?s.name.substring(0,9)+'…':s.name;
   charG.appendChild(label);
 
@@ -1005,74 +1037,148 @@ function buildCharacterGroup(s,color){
   const dur=(1.6+Math.random()*0.9).toFixed(2)+'s';
   const delay=(Math.random()*1.6).toFixed(2)+'s';
   const anim=el('animateTransform',{attributeName:'transform',type:'translate',
-    values:'0 0; 0 -4; 0 0',keyTimes:'0;0.5;1',dur,begin:delay,repeatCount:'indefinite'});
+    values:'0 0; 0 -6; 0 0',keyTimes:'0;0.5;1',dur,begin:delay,repeatCount:'indefinite'});
   charG.appendChild(anim);
   return charG;
 }
 
-// ── SEATING VIEW (draggable, rotatable desks) ──
-const SEAT_MIN_DIST=125;
+// ── SEATING VIEW: desks+chairs (edit-mode furniture) and characters (normal-mode, decoupled) ──
+const DESK_HW=80, DESK_HH=36, CHAR_OFFSET_Y=34, CHAR_MIN_DIST=150, DESK_SNAP_DIST=18;
+
+function rotateOffset(dx,dy,rotDeg){
+  const rad=rotDeg*Math.PI/180;
+  return {x:dx*Math.cos(rad)-dy*Math.sin(rad), y:dx*Math.sin(rad)+dy*Math.cos(rad)};
+}
 
 function renderSeatingUnits(svg,W,H){
-  const cols=6,startX=180,startY=230,spacingX=155,spacingY=140;
+  const cols=5,startX=210,startY=260,spacingX=190,spacingY=190;
   students.forEach((s,idx)=>{
     const row=Math.floor(idx/cols),col=idx%cols;
-    const defaultX=Math.min(startX+col*spacingX,W-100);
-    const defaultY=Math.min(startY+row*spacingY,H-100);
-    const pos=seatingLayout[s.id]||{x:defaultX,y:defaultY,rot:0};
-    svg.appendChild(buildSeatUnit(s,pos.x,pos.y,pos.rot||0));
+    const defaultX=Math.min(startX+col*spacingX,W-160);
+    const defaultY=Math.min(startY+row*spacingY,H-170);
+    const desk=deskLayout[s.id]||{x:defaultX,y:defaultY,rot:0};
+
+    svg.appendChild(buildDeskUnit(s,desk));
+
+    let charPos;
+    if(studentOverrides[s.id]){
+      charPos=studentOverrides[s.id];
+    }else{
+      const off=rotateOffset(0,CHAR_OFFSET_Y,desk.rot||0);
+      charPos={x:desk.x+off.x,y:desk.y+off.y};
+    }
+    svg.appendChild(buildCharacterUnit(s,charPos));
   });
 }
 
-function buildSeatUnit(s,x,y,rot){
-  const color=s.group_id?GROUP_HEX[(s.group_id-1+6)%6]:'#556b8f';
-  const g=el('g',{class:'seat-unit','data-student-id':s.id,'data-rot':rot||0,transform:`translate(${x},${y})`});
-  g.style.cursor='grab';
+function buildDeskUnit(s,desk){
+  const rot=desk.rot||0;
+  const g=el('g',{class:'seat-unit','data-student-id':s.id,'data-rot':rot,transform:`translate(${desk.x},${desk.y})`});
 
-  // Desk graphic — this part rotates
-  const deskG=el('g',{class:'desk-shape',transform:`rotate(${rot||0})`});
-  deskG.appendChild(el('rect',{x:-40,y:-8,width:80,height:36,rx:6,fill:'#a3855a',stroke:'#7a6339','stroke-width':2.5}));
-  deskG.appendChild(el('rect',{x:-32,y:-2,width:64,height:8,rx:2,fill:'#c9a876'}));
+  // Desk + chair — both inside this rotating sub-group, so the chair always turns with the desk
+  const deskG=el('g',{class:'desk-shape',transform:`rotate(${rot})`});
+  deskG.appendChild(el('rect',{x:-DESK_HW,y:-DESK_HH,width:DESK_HW*2,height:DESK_HH*2,rx:10,fill:'#a3855a',stroke:'#7a6339','stroke-width':3}));
+  deskG.appendChild(el('rect',{x:-DESK_HW+16,y:-DESK_HH+8,width:DESK_HW*2-32,height:18,rx:4,fill:'#c9a876'}));
+  // Chair sits at the desk's front edge (the side facing the student)
+  deskG.appendChild(el('rect',{x:-38,y:DESK_HH+10,width:76,height:64,rx:16,fill:'#7a6339',stroke:'#5a4527','stroke-width':2.5}));
+  deskG.appendChild(el('rect',{x:-38,y:DESK_HH+10,width:76,height:16,rx:6,fill:'#8b6f47'}));
   g.appendChild(deskG);
 
-  // Character + label — always stays upright, never rotates
-  const charWrap=el('g',{transform:'translate(0,48)'});
-  charWrap.appendChild(buildCharacterGroup(s,color));
-  g.appendChild(charWrap);
-
-  // Rotate handle — fixed position, always upright
-  const rotateBtn=el('g',{class:'seat-rotate-btn',transform:'translate(46,-22)'});
-  rotateBtn.appendChild(el('circle',{cx:0,cy:0,r:12}));
-  const rotIcon=el('text',{x:0,y:4});
-  rotIcon.textContent='↻';
-  rotateBtn.appendChild(rotIcon);
-  rotateBtn.addEventListener('pointerdown',e=>e.stopPropagation());
-  rotateBtn.addEventListener('click',e=>{e.stopPropagation();rotateSeat(g,s.id);});
-  g.appendChild(rotateBtn);
-
-  attachDragHandlers(g,s.id);
+  if(editLayoutMode){
+    g.style.cursor='grab';
+    const rotateBtn=el('g',{class:'seat-rotate-btn',transform:`translate(${DESK_HW+16},${-DESK_HH-10})`});
+    rotateBtn.appendChild(el('circle',{cx:0,cy:0,r:20}));
+    const rotIcon=el('text',{x:0,y:7});
+    rotIcon.textContent='↻';
+    rotateBtn.appendChild(rotIcon);
+    rotateBtn.addEventListener('pointerdown',e=>e.stopPropagation());
+    rotateBtn.addEventListener('click',e=>{e.stopPropagation();rotateDesk(g,s.id);});
+    g.appendChild(rotateBtn);
+    attachDeskDragHandlers(g,s.id);
+  }else{
+    g.style.cursor='default';
+  }
   return g;
 }
 
-async function rotateSeat(g,studentId){
+function buildCharacterUnit(s,pos){
+  const color=s.group_id?GROUP_HEX[(s.group_id-1+6)%6]:'#556b8f';
+  const g=el('g',{class:'char-unit','data-student-id':s.id,transform:`translate(${pos.x},${pos.y})`});
+  g.appendChild(buildCharacterGroup(s,color));
+
+  if(!editLayoutMode){
+    g.style.cursor='grab';
+    attachCharDragHandlers(g,s.id);
+  }else{
+    g.style.cursor='pointer';
+    g.addEventListener('click',()=>openStudentPopup(s.id));
+  }
+  return g;
+}
+
+async function rotateDesk(g,studentId){
   const current=parseInt(g.getAttribute('data-rot'))||0;
   const next=(current+45)%360;
-  g.setAttribute('data-rot',next);
-  g.querySelector('.desk-shape').setAttribute('transform',`rotate(${next})`);
   const matrix=g.transform.baseVal.consolidate().matrix;
-  seatingLayout[studentId]={x:matrix.e,y:matrix.f,rot:next};
+  deskLayout[studentId]={x:matrix.e,y:matrix.f,rot:next};
   await saveClassData();
+  renderScene(); // re-render so the chair (and any attached, non-overridden student) turns with the desk
 }
 
-function attachDragHandlers(g,studentId){
-  g.addEventListener('pointerdown',e=>startDrag(e,g,studentId));
-  g.addEventListener('pointermove',e=>{if(dragState&&dragState.g===g)onSeatPointerMove(e);});
-  g.addEventListener('pointerup',e=>{if(dragState&&dragState.g===g)onSeatPointerUp(e);});
-  g.addEventListener('pointercancel',()=>{if(dragState&&dragState.g===g){g.classList.remove('dragging-seat','blocked-seat');dragState=null;}});
+// ── DESK dragging (edit mode only), with neighbor snapping + overlap prevention ──
+function getEffectiveHalfExtents(rot){
+  const normalized=((rot%180)+180)%180;
+  return normalized===90 ? {hw:DESK_HH,hh:DESK_HW} : {hw:DESK_HW,hh:DESK_HH};
+}
+function getRotatedCorners(x,y,rot){
+  const rad=rot*Math.PI/180;
+  return [[-DESK_HW,-DESK_HH],[DESK_HW,-DESK_HH],[DESK_HW,DESK_HH],[-DESK_HW,DESK_HH]].map(([dx,dy])=>({
+    x:x+dx*Math.cos(rad)-dy*Math.sin(rad),
+    y:y+dx*Math.sin(rad)+dy*Math.cos(rad)
+  }));
+}
+function getAABB(corners){
+  const xs=corners.map(c=>c.x),ys=corners.map(c=>c.y);
+  return{minX:Math.min(...xs),maxX:Math.max(...xs),minY:Math.min(...ys),maxY:Math.max(...ys)};
+}
+function aabbOverlap(a,b){
+  const pad=-2;
+  return a.minX<b.maxX+pad && a.maxX>b.minX-pad && a.minY<b.maxY+pad && a.maxY>b.minY-pad;
+}
+function isOrthogonal(rot){return((rot%90)+90)%90===0;}
+
+function trySnapDesk(nx,ny,rot,others){
+  if(!isOrthogonal(rot))return{x:nx,y:ny};
+  let bestX=nx,bestY=ny;
+  const{hw,hh}=getEffectiveHalfExtents(rot);
+  for(const o of others){
+    if(!isOrthogonal(o.rot))continue;
+    const oExt=getEffectiveHalfExtents(o.rot);
+    const oL=o.x-oExt.hw,oR=o.x+oExt.hw,oT=o.y-oExt.hh,oB=o.y+oExt.hh;
+    const dL=nx-hw,dR=nx+hw,dT=ny-hh,dB=ny+hh;
+    const vOverlap=dT<oB && dB>oT;
+    const hOverlap=dL<oR && dR>oL;
+    if(vOverlap){
+      if(Math.abs(dR-oL)<DESK_SNAP_DIST){bestX=oL-hw;bestY=o.y;}
+      if(Math.abs(dL-oR)<DESK_SNAP_DIST){bestX=oR+hw;bestY=o.y;}
+    }
+    if(hOverlap){
+      if(Math.abs(dB-oT)<DESK_SNAP_DIST){bestY=oT-hh;bestX=o.x;}
+      if(Math.abs(dT-oB)<DESK_SNAP_DIST){bestY=oB+hh;bestX=o.x;}
+    }
+  }
+  return{x:bestX,y:bestY};
 }
 
-function startDrag(evt,g,studentId){
-  if(sceneMode!=='seating')return;
+function attachDeskDragHandlers(g,studentId){
+  g.addEventListener('pointerdown',e=>startDeskDrag(e,g,studentId));
+  g.addEventListener('pointermove',e=>{if(dragState&&dragState.g===g&&dragState.type==='desk')onDeskPointerMove(e);});
+  g.addEventListener('pointerup',e=>{if(dragState&&dragState.g===g&&dragState.type==='desk')onDeskPointerUp(e);});
+  g.addEventListener('pointercancel',()=>{if(dragState&&dragState.g===g){g.classList.remove('dragging-seat','blocked-seat','snapping-seat');dragState=null;}});
+}
+
+function startDeskDrag(evt,g,studentId){
+  if(!editLayoutMode)return;
   if(evt.target.closest('.seat-rotate-btn'))return;
   evt.preventDefault();
   const svg=document.getElementById('scene-svg');
@@ -1082,43 +1188,110 @@ function startDrag(evt,g,studentId){
   svg.querySelectorAll('.seat-unit').forEach(el2=>{
     if(el2.getAttribute('data-student-id')===studentId)return;
     const m=el2.transform.baseVal.consolidate().matrix;
-    others.push({x:m.e,y:m.f});
+    others.push({x:m.e,y:m.f,rot:parseInt(el2.getAttribute('data-rot'))||0});
   });
-  dragState={g,studentId,offsetX:pt.x-matrix.e,offsetY:pt.y-matrix.f,
+  dragState={type:'desk',g,studentId,offsetX:pt.x-matrix.e,offsetY:pt.y-matrix.f,
     moved:false,startClientX:evt.clientX,startClientY:evt.clientY,
-    pendingX:matrix.e,pendingY:matrix.f,others};
+    pendingX:matrix.e,pendingY:matrix.f,others,rot:parseInt(g.getAttribute('data-rot'))||0};
   g.setPointerCapture(evt.pointerId);
   g.classList.add('dragging-seat');
 }
 
-function onSeatPointerMove(evt){
+function onDeskPointerMove(evt){
   const svg=document.getElementById('scene-svg');
   const pt=getSVGPoint(svg,evt);
-  const grid=20;
-  let nx=Math.round((pt.x-dragState.offsetX)/grid)*grid;
-  let ny=Math.round((pt.y-dragState.offsetY)/grid)*grid;
-  nx=Math.max(90,Math.min(1110,nx));
-  ny=Math.max(140,Math.min(760,ny));
+  let nx=pt.x-dragState.offsetX;
+  let ny=pt.y-dragState.offsetY;
+  nx=Math.max(100,Math.min(1100,nx));
+  ny=Math.max(150,Math.min(750,ny));
 
-  const collides=dragState.others.some(o=>Math.hypot(o.x-nx,o.y-ny)<SEAT_MIN_DIST);
-  if(!collides){
+  const snapped=trySnapDesk(nx,ny,dragState.rot,dragState.others);
+  const didSnap=snapped.x!==nx||snapped.y!==ny;
+  nx=snapped.x;ny=snapped.y;
+
+  const myAABB=getAABB(getRotatedCorners(nx,ny,dragState.rot));
+  const overlaps=dragState.others.some(o=>aabbOverlap(myAABB,getAABB(getRotatedCorners(o.x,o.y,o.rot))));
+
+  if(!overlaps){
     dragState.g.setAttribute('transform',`translate(${nx},${ny})`);
     dragState.pendingX=nx;dragState.pendingY=ny;
     dragState.g.classList.remove('blocked-seat');
+    dragState.g.classList.toggle('snapping-seat',didSnap);
   }else{
     dragState.g.classList.add('blocked-seat');
+    dragState.g.classList.remove('snapping-seat');
   }
   const dx=evt.clientX-dragState.startClientX,dy=evt.clientY-dragState.startClientY;
   if(Math.hypot(dx,dy)>6)dragState.moved=true;
 }
 
-async function onSeatPointerUp(evt){
-  const{g,studentId,pendingX,pendingY,moved}=dragState;
-  g.classList.remove('dragging-seat','blocked-seat');
+async function onDeskPointerUp(evt){
+  const{g,studentId,pendingX,pendingY,moved,rot}=dragState;
+  g.classList.remove('dragging-seat','blocked-seat','snapping-seat');
   try{g.releasePointerCapture(evt.pointerId)}catch{}
   if(moved){
-    const rot=parseInt(g.getAttribute('data-rot'))||0;
-    seatingLayout[studentId]={x:pendingX,y:pendingY,rot};
+    deskLayout[studentId]={x:pendingX,y:pendingY,rot};
+    await saveClassData();
+    renderScene();
+  }else{
+    openStudentPopup(studentId);
+  }
+  dragState=null;
+}
+
+// ── CHARACTER dragging (normal mode only), free positioning, detachable from desk/chair ──
+function attachCharDragHandlers(g,studentId){
+  g.addEventListener('pointerdown',e=>startCharDrag(e,g,studentId));
+  g.addEventListener('pointermove',e=>{if(dragState&&dragState.g===g&&dragState.type==='char')onCharPointerMove(e);});
+  g.addEventListener('pointerup',e=>{if(dragState&&dragState.g===g&&dragState.type==='char')onCharPointerUp(e);});
+  g.addEventListener('pointercancel',()=>{if(dragState&&dragState.g===g){g.classList.remove('dragging-char','blocked-char');dragState=null;}});
+}
+
+function startCharDrag(evt,g,studentId){
+  if(editLayoutMode)return;
+  evt.preventDefault();
+  const svg=document.getElementById('scene-svg');
+  const pt=getSVGPoint(svg,evt);
+  const matrix=g.transform.baseVal.consolidate().matrix;
+  const others=[];
+  svg.querySelectorAll('.char-unit').forEach(el2=>{
+    if(el2.getAttribute('data-student-id')===studentId)return;
+    const m=el2.transform.baseVal.consolidate().matrix;
+    others.push({x:m.e,y:m.f});
+  });
+  dragState={type:'char',g,studentId,offsetX:pt.x-matrix.e,offsetY:pt.y-matrix.f,
+    moved:false,startClientX:evt.clientX,startClientY:evt.clientY,
+    pendingX:matrix.e,pendingY:matrix.f,others};
+  g.setPointerCapture(evt.pointerId);
+  g.classList.add('dragging-char');
+}
+
+function onCharPointerMove(evt){
+  const svg=document.getElementById('scene-svg');
+  const pt=getSVGPoint(svg,evt);
+  let nx=pt.x-dragState.offsetX;
+  let ny=pt.y-dragState.offsetY;
+  nx=Math.max(60,Math.min(1140,nx));
+  ny=Math.max(90,Math.min(780,ny));
+
+  const collides=dragState.others.some(o=>Math.hypot(o.x-nx,o.y-ny)<CHAR_MIN_DIST);
+  if(!collides){
+    dragState.g.setAttribute('transform',`translate(${nx},${ny})`);
+    dragState.pendingX=nx;dragState.pendingY=ny;
+    dragState.g.classList.remove('blocked-char');
+  }else{
+    dragState.g.classList.add('blocked-char');
+  }
+  const dx=evt.clientX-dragState.startClientX,dy=evt.clientY-dragState.startClientY;
+  if(Math.hypot(dx,dy)>6)dragState.moved=true;
+}
+
+async function onCharPointerUp(evt){
+  const{g,studentId,pendingX,pendingY,moved}=dragState;
+  g.classList.remove('dragging-char','blocked-char');
+  try{g.releasePointerCapture(evt.pointerId)}catch{}
+  if(moved){
+    studentOverrides[studentId]={x:pendingX,y:pendingY};
     await saveClassData();
   }else{
     openStudentPopup(studentId);
@@ -1126,11 +1299,21 @@ async function onSeatPointerUp(evt){
   dragState=null;
 }
 
+function toggleEditLayout(){
+  editLayoutMode=!editLayoutMode;
+  const btn=document.getElementById('edit-layout-btn');
+  const banner=document.getElementById('edit-mode-banner');
+  btn.classList.toggle('active',editLayoutMode);
+  btn.textContent=editLayoutMode?'✓ Selesai Edit':'✏️ Edit Susun Atur';
+  banner.classList.toggle('show',editLayoutMode);
+  renderScene();
+}
+
 // ── GROUP VIEW (circular clusters) ──
 function renderGroupClusters(svg,W,H){
   const centerX=W/2,centerY=H/2+30;
   const groupCount=grouping.length;
-  const orbitR=Math.min(260,80+groupCount*35);
+  const orbitR=Math.min(280,110+groupCount*40);
 
   grouping.forEach((group,gi)=>{
     const angle=(gi/groupCount)*2*Math.PI-Math.PI/2;
@@ -1138,10 +1321,10 @@ function renderGroupClusters(svg,W,H){
     const gy=centerY+orbitR*0.72*Math.sin(angle);
     const color=GROUP_HEX[gi%6];
     const memberCount=group.members.length||1;
-    const clusterR=55+Math.min(memberCount,10)*7;
+    const clusterR=75+Math.min(memberCount,10)*9;
 
     svg.appendChild(el('circle',{cx:gx,cy:gy,r:clusterR,fill:color,opacity:.14,stroke:color,'stroke-width':3,'stroke-dasharray':'7 5'}));
-    const glabel=el('text',{x:gx,y:gy-clusterR-14,'text-anchor':'middle','font-family':'Baloo 2','font-weight':800,'font-size':16,fill:color});
+    const glabel=el('text',{x:gx,y:gy-clusterR-16,'text-anchor':'middle','font-family':'Baloo 2','font-weight':800,'font-size':16,fill:color});
     glabel.textContent=`Kumpulan ${group.group_id}`;
     svg.appendChild(glabel);
 
@@ -1149,7 +1332,7 @@ function renderGroupClusters(svg,W,H){
       const student=students.find(s=>s.id===sid);
       if(!student)return;
       const mAngle=(mi/memberCount)*2*Math.PI;
-      const mr=memberCount>1?clusterR*0.55:0;
+      const mr=memberCount>1?clusterR*0.6:0;
       const sx=gx+mr*Math.cos(mAngle);
       const sy=gy+mr*Math.sin(mAngle);
       const charHolder=el('g',{transform:`translate(${sx},${sy})`,style:'cursor:pointer'});
@@ -1169,6 +1352,17 @@ function renderScene(){
   svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
 
   renderScoreboard();
+
+  const editBtn=document.getElementById('edit-layout-btn');
+  const editBanner=document.getElementById('edit-mode-banner');
+  if(sceneMode!=='seating'&&editLayoutMode){
+    editLayoutMode=false;
+    editBtn.classList.remove('active');
+    editBtn.textContent='✏️ Edit Susun Atur';
+    editBanner.classList.remove('show');
+  }
+  editBtn.style.display=sceneMode==='seating'?'flex':'none';
+  if(sceneMode!=='seating')editBanner.classList.remove('show');
 
   if(!currentClass){emptyDiv.style.display='flex';return;}
   emptyDiv.style.display='none';
